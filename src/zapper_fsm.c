@@ -1,6 +1,9 @@
 #include "zapper_fsm.h"
 #include <stdio.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
 #include <time.h>
 #include <sys/time.h>
 #include <errno.h>
@@ -15,13 +18,18 @@ static info_callback_t info_callback;
 static struct timeval last_key_press;
 static struct timespec future;
 
+static struct sigevent sev;
+static timer_t timer_id;
+static struct itimerspec fTime;
+static struct itimerspec oTime;
+
 char input_buff[4];
 char input_len = 0;
 
 static pthread_mutex_t mx = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  cond = PTHREAD_COND_INITIALIZER;
 
-void *schedule_update(void *args);
+void schedule_update();
 
 static int isNum(char ev)
 {
@@ -46,6 +54,13 @@ int  zapp_fsm_init(info_callback_t callback)
   pthread_mutex_init(&mx, NULL);
   pthread_cond_init(&cond, NULL);
 
+  sev.sigev_notify = SIGEV_THREAD;
+  sev.sigev_notify_function = schedule_update;
+  sev.sigev_notify_attributes = NULL;
+
+  timer_create(CLOCK_REALTIME, &sev, &timer_id);
+  puts("timer init");
+
   info_callback = callback;
   return 0;
 }
@@ -62,9 +77,7 @@ void store_num(char ev)
   input_buff[input_len] = ev;
   input_len++;
   input_buff[input_len] = '\0';
-  gettimeofday(&last_key_press, NULL);
 
-  future.tv_sec = last_key_press.tv_sec + WAIT_INTERVAL;
 }
 
 int should_update()
@@ -79,34 +92,18 @@ int should_update()
   }
 }
 
-void *schedule_update(void *args)
+void schedule_update(void *args)
 {
-  puts("starting a timer");
-  pthread_mutex_lock(&mx);
-
-  struct timeval now;
-  struct timespec future;
-  gettimeofday(&now, NULL);
-  future.tv_sec = now.tv_sec + 3;
-  future.tv_nsec = now.tv_usec * 1000;
-  int ret;
-
-  while(ret != ETIMEDOUT)
+  if(should_update())
   {
-    ret = pthread_cond_timedwait(&cond, &mx, &future);
-  }
-
-  if(ret == ETIMEDOUT && should_update())
-  {
+    puts("timer fired");
     state = STATE_UPDATE;
     zapp_fsm_key_press(-1);
   }
   else
   {
-    puts("killing timer");
+    puts("misfired timer");
   }
-
-  pthread_mutex_unlock(&mx);
 }
 
 void zapp_fsm_key_press(char ev)
@@ -118,8 +115,8 @@ void zapp_fsm_key_press(char ev)
       state = STATE_NUM_ENTER;
       store_num(ev);
 
-      pthread_t notifier_handle;
-      pthread_create(&notifier_handle, NULL, schedule_update, NULL);
+      fTime.it_value.tv_sec = 2;
+      timer_settime(&timer_id, 0, &fTime, NULL);
     }
     else if('q' == ev)
     {
@@ -150,13 +147,11 @@ void zapp_fsm_key_press(char ev)
   }
   else if(STATE_UPDATE == state)
   {
+    fTime.it_value.tv_sec = 0;
+    timer_settime(&timer_id, 0, &fTime, NULL);
     process_buffer();
     info_callback(current_chan);
     state = STATE_IDLE;
-
-    /* pthread_mutex_lock(&mx); */
-    /* pthread_cond_signal(&cond); */
-    /* pthread_mutex_unlock(&mx); */
   }
 }
 
