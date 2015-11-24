@@ -10,6 +10,7 @@ set(ZAPP_LIBS
   console
 
   pthread
+  rt
 )
 
 include_directories("inc")

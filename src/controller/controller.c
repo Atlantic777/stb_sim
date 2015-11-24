@@ -1,17 +1,67 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <time.h>
 #include "controller.h"
 
 static view_t   *_view;
 /* static model_t  *model; */
-/* static input_t  *input; */
 
 State _state;
 
 static void state_scan(signal_t, char*);
 static void state_idle(signal_t, char*);
 static void state_num_enter(signal_t, char*);
+
+static char nums[4];
+static int  nums_len;
+static int  current_chan = 1;
+
+static struct itimerspec its;
+static struct sigevent sev;
+
+static timer_t t_num_input_id;
+static timer_t t_info_bar_id;
+static timer_t t_volume_id;
+
+static void process_input_buffer()
+{
+  current_chan = atoi(nums);
+  nums_len = 0;
+}
+
+static void info_bar_finish()
+{
+  _view->hide_info_bar();
+}
+
+static void num_finish()
+{
+  _view->hide_num_input();
+  process_input_buffer();
+
+  _view->show_info_bar(current_chan);
+  timer_settime(t_info_bar_id, 0, &its, NULL);
+
+  _state = state_idle;
+  _state(SIG_NOOP, NULL);
+}
+
+static void store_num(char n)
+{
+  if(nums_len == 3)
+  {
+    nums_len = 0;
+  }
+
+  nums[nums_len] = n;
+  nums_len++;
+  nums[nums_len] = 0;
+
+  timer_settime(t_num_input_id, 0, &its, NULL);
+  _view->show_num_input(nums);
+}
 
 // ############ STATES ################
 static void state_scan(signal_t sig, char *args)
@@ -27,6 +77,7 @@ static void state_idle(signal_t sig, char *args)
 {
   if(SIG_NUM_KEY == sig)
   {
+    store_num(args[0]);
     _state = state_num_enter;
   }
   LOG("Idle state...");
@@ -37,7 +88,8 @@ static void state_num_enter(signal_t sig, char *args)
   LOG("num enter");
   if(SIG_NUM_KEY == sig)
   {
-    printf("number %d\n", args[0]-48);
+    // printf("number %d\n", args[0]-48);
+    store_num(args[0]);
   }
   else if(SIG_TIMEOUT == sig)
   {
@@ -123,6 +175,20 @@ int ctrl_init(controller_t *ctrl)
   ctrl->handler   = input_handler;
 
   _state          = state_scan;
+
+  sev.sigev_notify          = SIGEV_THREAD;
+  sev.sigev_notify_attributes = NULL;
+
+  its.it_value.tv_sec = 3;
+  its.it_value.tv_nsec = 0;
+  its.it_interval.tv_sec = 0;
+  its.it_interval.tv_nsec = 0;
+
+  sev.sigev_notify_function = num_finish;
+  timer_create(CLOCK_REALTIME, &sev, &t_num_input_id);
+
+  sev.sigev_notify_function = info_bar_finish;
+  timer_create(CLOCK_REALTIME, &sev, &t_info_bar_id);
 
   return 0;
 }

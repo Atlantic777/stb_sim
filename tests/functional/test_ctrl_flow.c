@@ -31,6 +31,7 @@ void deinit()
 
 int main()
 {
+  puts("Enable CTRL logging in controller.h!");
   init();
 
   ctrl_set_view(&console);
