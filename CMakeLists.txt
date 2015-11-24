@@ -4,6 +4,10 @@ project(STB_sim C)
 set(OUT_PREFIX "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_PREFIX}")
 
+set(ZAPP_LIBS
+  keyboard
+)
+
 include_directories("inc")
 include_directories("cutest/include")
 
