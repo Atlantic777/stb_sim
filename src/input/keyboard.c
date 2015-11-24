@@ -1,10 +1,16 @@
-#include "input/keyboard.h"
 #include <stdio.h>
 #include <termios.h>
+#include <pthread.h>
+#include "input/keyboard.h"
 
+static void (*_handler)(char);
 static int initialized = 0;
 
-int getch(void)
+static void kb_start();
+
+pthread_t kb_thread_id;
+
+static int getch(void)
 {
   int ch;
   struct termios oldt;
@@ -26,36 +32,62 @@ int kb_get_event(char *ev)
   }
   else
   {
-    puts("input not opened");
+    /* puts("input not opened"); */
   }
 
   return 0;
 }
 
-int kb_init()
+int kb_init(input_t *input)
 {
   if(0 == initialized)
   {
     initialized = 1;
-    puts("open");
+    input->start = kb_start;
+    input->read = kb_get_event;
+    /* puts("open"); */
   }
   else
   {
-    puts("already opened");
+    /* puts("already opened"); */
   }
 
   return 0;
 }
 
-int kb_deinit()
+int kb_deinit(input_t *input)
 {
   if(0 != initialized)
   {
-    puts("closed");
+    /* puts("closed"); */
     initialized = 0;;
   }
   else
   {
-    puts("no op");
+    /* puts("no op"); */
   }
+
+  return 0;
+}
+
+int kb_set_callback(void(*handler)(char))
+{
+  _handler = handler;
+  return 0;
+}
+
+static void *kb_loop(void *args)
+{
+  char ev;
+
+  while(1) {
+    kb_get_event(&ev);
+    _handler(ev);
+  }
+}
+
+static void kb_start()
+{
+  pthread_create(&kb_thread_id, NULL, kb_loop, NULL);
+  pthread_join(kb_thread_id, NULL);
 }

@@ -6,6 +6,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_PREFIX}")
 
 set(ZAPP_LIBS
   keyboard
+  controller
+  console
+
+  pthread
 )
 
 include_directories("inc")

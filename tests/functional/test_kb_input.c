@@ -1,12 +1,14 @@
 #include <stdio.h>
+#include "input.h"
 #include "input/keyboard.h"
 
 int main()
 {
-  kb_init();
+  input_t kb;
+  kb_init(&kb);
 
   char ev;
-  kb_get_event(&ev);
+  kb.read(&ev);
 
   printf("d: %hhd x: %hhx c: %c\n", ev, ev, ev);
 
