@@ -1,4 +1,4 @@
-#include "zapper_fsm.h"
+#include "controller/zapper_fsm.h"
 
 State state;
 char input_len = 0;

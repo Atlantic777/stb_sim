@@ -1,4 +1,4 @@
-#include "zapper_gui_gl.h"
+#include "afb/zapper_gui_gl.h"
 #include "GL/glut.h"
 #include <string.h>
 #include <pthread.h>

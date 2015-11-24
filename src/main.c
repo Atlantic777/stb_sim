@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "keyboard.h"
-#include "zapper_fsm.h"
-#include "zapper_gui_gl.h"
+#include "input/keyboard.h"
+#include "controller/zapper_fsm.h"
+#include "afb/zapper_gui_gl.h"
 
 char event;
 

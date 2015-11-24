@@ -1,4 +1,4 @@
-#include "zapper_fsm.h"
+#include "controller/zapper_fsm.h"
 
 void state_idle(char ev)
 {
