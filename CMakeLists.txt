@@ -8,9 +8,15 @@ set(ZAPP_LIBS
   keyboard
   controller
   console
+  gl_view
+  afb_gl
 
+  GL
+  GLU
+  glut
   pthread
   rt
+  X11
 )
 
 include_directories("inc")

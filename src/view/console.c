@@ -61,10 +61,9 @@ static void *console_render_loop(void *args)
     render_num_input();
     render_info_bar();
     /* render_volume_info(); */
-
     puts("here");
 
-    sleep(1);
+    usleep(200000);
   }
 }
 
