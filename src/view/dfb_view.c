@@ -65,8 +65,6 @@ static void *dfb_render_loop(void *args)
 	pos++;
 
 	if(pos > 100) pos = 0;
-
-	printf("%d\n", pos);
 }
 
 static void dfb_view_start()

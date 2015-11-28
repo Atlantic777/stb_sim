@@ -4,15 +4,15 @@
 #include <signal.h>
 #include <time.h>
 #include "controller.h"
+#include "model.h"
 
 static view_t   *_view;
-/* static model_t  *model; */
-
+static model_t  *_model; 
 State _state;
 
-static void state_scan(signal_t, char*);
-static void state_idle(signal_t, char*);
-static void state_num_enter(signal_t, char*);
+static void state_scan(signal_t, char);
+static void state_idle(signal_t, char);
+static void state_num_enter(signal_t, char);
 
 static char nums[4];
 static int  nums_len;
@@ -45,7 +45,7 @@ static void num_finish()
   timer_settime(t_info_bar_id, 0, &its, NULL);
 
   _state = state_idle;
-  _state(SIG_NOOP, NULL);
+  _state(SIG_NOOP, 0);
 }
 
 static void store_num(char n)
@@ -64,32 +64,33 @@ static void store_num(char n)
 }
 
 // ############ STATES ################
-static void state_scan(signal_t sig, char *args)
+static void state_scan(signal_t sig, char args)
 {
   LOG("scanning...");
   _state = state_idle;
-  _state(SIG_NOOP, NULL);
+  _state(SIG_NOOP, 0);
 
   LOG("scan state finished");
 }
 
-static void state_idle(signal_t sig, char *args)
+static void state_idle(signal_t sig, char args)
 {
+	LOG("idle state handler got key");
   if(SIG_NUM_KEY == sig)
   {
-    store_num(args[0]);
+    store_num(args);
     _state = state_num_enter;
   }
   LOG("Idle state...");
 }
 
-static void state_num_enter(signal_t sig, char *args)
+static void state_num_enter(signal_t sig, char args)
 {
   LOG("num enter");
   if(SIG_NUM_KEY == sig)
   {
     // printf("number %d\n", args[0]-48);
-    store_num(args[0]);
+    store_num(args);
   }
   else if(SIG_TIMEOUT == sig)
   {
@@ -123,7 +124,7 @@ static void start()
   parse_config();
   switch_default();
 
-  _state(SIG_NOOP, NULL);
+  _state(SIG_NOOP, 0);
 }
 
 static void stop()
@@ -132,7 +133,7 @@ static void stop()
 
 static int isNum(char c)
 {
-  if(c >= '0' && c <= '9')
+  if(c >= 2 && c <= 10)
   {
     return 1;
   }
@@ -144,12 +145,13 @@ static int isNum(char c)
 
 static signal_t decode_signal(char ev)
 {
+	// TODO: create key codes table
   if(isNum(ev))
   {
     LOG("SIG_NUM_KEY");
     return SIG_NUM_KEY;
   }
-  else if('q' == ev)
+  else if(116 == ev)
   {
     LOG("SIG_KILL");
     return SIG_KILL;
@@ -158,14 +160,19 @@ static signal_t decode_signal(char ev)
 
 static void input_handler(char ev)
 {
+	LOG("input handler triggered");
+	puts("here");
+
   signal_t sig = decode_signal(ev);
+
+	printf("key %hhd\n", ev);
 
   if(SIG_KILL == sig)
   {
     exit(0);
   }
 
-  _state(sig, &ev);
+  _state(sig, ev);
 }
 
 int ctrl_init(controller_t *ctrl)
@@ -202,4 +209,10 @@ int ctrl_set_view(view_t *view)
 {
   _view = view;
   return 0;
+}
+
+int ctrl_set_model(model_t *model)
+{
+	_model = model;
+	return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef CONTOLLER_H
 #define CONTROLLER_H
 
-#define CTRL_DEBUG 0
+#define CTRL_DEBUG 1
 
 #if CTRL_DEBUG == 1
   #define LOG(MSG) _view->log("CTRL -> " MSG)
@@ -24,7 +24,7 @@ typedef struct controller {
   void (*handler)(char);
 } controller_t;
 
-typedef void(*State)(signal_t, char*);
+typedef void(*State)(signal_t, char);
 
 int ctrl_init(controller_t *ctrl);
 int ctrl_deinit();

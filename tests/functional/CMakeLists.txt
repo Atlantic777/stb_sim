@@ -12,3 +12,6 @@ target_link_libraries(test_cli_view keyboard console controller pthread rt)
 
 add_executable(test_dfb_view test_dfb_view.c)
 target_link_libraries(test_dfb_view keyboard dfb_view controller pthread rt)
+
+add_executable(test_model_and_dfb_view test_model_and_dfb_view.c)
+target_link_libraries(test_model_and_dfb_view remote dfb_view controller model)
