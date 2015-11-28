@@ -18,6 +18,4 @@ typedef struct model {
 	int (*vol_down)();
 } model_t;
 
-void stb_model_init(model_t *model);
-
 #endif

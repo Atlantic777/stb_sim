@@ -1,7 +1,7 @@
 #include "parsers/pmt_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <tdp_api.h>
+/* #include <tdp_api.h> */
 
 #define AUDIO_TYPE 3
 #define VIDEO_TYPE 4
@@ -40,7 +40,7 @@ int pmt_parse(pmt_table_t *pmt, uint8_t *buff)
 	}
 
 	// parse streams
-	streams_offset = 
+	streams_offset =
 		PMT_HEADER_LEN + pmt->program_info_length + 1;
 
 	parsed = streams_offset;
@@ -67,7 +67,7 @@ int pmt_parse(pmt_table_t *pmt, uint8_t *buff)
 		current->next = NULL;
 
 		pmt->streams_cnt++;
-	} 
+	}
 }
 
 int pmt_print(pmt_table_t *pmt)
@@ -76,7 +76,7 @@ int pmt_print(pmt_table_t *pmt)
 	printf("streams cnt\t-\t%d\n", pmt->streams_cnt);
 
 	stream_t *current = pmt->streams;
-	
+
 	int i;
 	for(i = 0; i < pmt->streams_cnt; i++)
 	{

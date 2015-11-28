@@ -1,1 +1,1 @@
-# add_executable(test_runner test_runner.c)
+add_executable(test_runner test_runner.c)

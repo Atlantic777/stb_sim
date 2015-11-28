@@ -1,2 +1,9 @@
-add_library(model model.c)
-target_link_libraries(model pat_parser pmt_parser)
+if(DEFINED CROSS_COMPILE)
+  add_library(real_model real_model.c)
+  target_link_libraries(real_model pat_parser pmt_parser)
+endif()
+
+if(NOT DEFINED CROSS_COMPILE)
+  add_library(fake_model fake_model.c)
+  target_link_libraries(fake_model pat_parser pmt_parser)
+endif()
