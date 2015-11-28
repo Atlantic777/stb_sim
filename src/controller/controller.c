@@ -61,6 +61,7 @@ static void store_num(char n)
 
   timer_settime(t_num_input_id, 0, &its, NULL);
   _view->show_num_input(nums);
+	_model->ch_switch(n);
 }
 
 // ############ STATES ################
@@ -170,6 +171,7 @@ static void input_handler(char ev)
 
   if(SIG_KILL == sig)
   {
+		_model->deinit();
     exit(0);
   }
 
