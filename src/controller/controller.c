@@ -103,6 +103,7 @@ static void state_num_enter(signal_t sig, char args)
 static void boot()
 {
   LOG("Booting...");
+	_model->init();
 }
 
 static void parse_config()

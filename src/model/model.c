@@ -1,4 +1,9 @@
+#include <tdp_api.h>
 #include "model.h"
+
+void lock_status_callback()
+{
+}
 
 int stb_init()
 {
@@ -8,13 +13,15 @@ int stb_init()
 	// player source open
 	// move to scan
 	puts("stb init");
+	Tuner_Init();
+	Tuner_Register_Status_Callback(lock_status_callback);
 	return 0;
 }
 
 int stb_deinit()
 {
 	puts("stb deinit");
-	// TODO
+	Tuner_Deinit();
 	return 0;
 }
 

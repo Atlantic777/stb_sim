@@ -18,7 +18,14 @@ SET(CMAKE_C_COMPILER "${CROSS_TOOLCHAIN_ROOT}/arm-marvell-linux-gnueabi-gcc")
 
 include_directories("${CROSS_ROOTFS}/usr/include/")
 include_directories("${CROSS_ROOTFS}/usr/include/directfb")
+include_directories("~/pputvios1/vezbe/tdp_api")
+
 link_directories(${DIRECTFB_PATH})
+
+link_directories("~/pputvios1/vezbe/tdp_api")
+link_directories("${CROSS_ROOTFS}/home/galois/lib") # OSAL, PEAgent
+
+SET(CMAKE_C_FLAGS "-D__LINUX__ -O0 -Wno-psabi --sysroot=${CROSS_ROOTFS}")
 
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 

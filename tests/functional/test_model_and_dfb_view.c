@@ -26,4 +26,5 @@ int main()
 
   ctrl.start();
   remote.start();
+	model.deinit();
 }
