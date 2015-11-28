@@ -81,15 +81,15 @@ int stb_fake_init()
 	/* Tuner_Lock_To_Frequency(DESIRED_FREQUENCY, BANDWIDTH, DVB_T); */
 
 	// TODO: add timed wait
-	pthread_mutex_lock(&status_mutex);
-	pthread_cond_wait(&status_condition, &status_mutex);
-	pthread_mutex_unlock(&status_mutex);
+	/* pthread_mutex_lock(&status_mutex); */
+	/* pthread_cond_wait(&status_condition, &status_mutex); */
+	/* pthread_mutex_unlock(&status_mutex); */
 
 	/* Player_Init(&player_handle); */
 	/* Player_Source_Open(player_handle, &source_handle); */
 
 	// move to scan
-	stb_scan();
+	/* stb_fake_scan(); */
 
 	return 0;
 }
@@ -129,9 +129,9 @@ int stb_fake_get_ch_list()
 int stb_fake_ch_switch(int ch)
 {
 	puts("switching chann");
-	program_desc_t *prog_desc;
-	pat_get_entry(ch, &pat, &prog_desc);
-
+	/* program_desc_t *prog_desc; */
+	/* pat_get_entry(ch, &pat, &prog_desc); */
+  /*  */
 	current_ch = ch;
 
 	/* Demux_Register_Section_Filter_Callback(demux_pmt_callback); */
@@ -139,28 +139,28 @@ int stb_fake_ch_switch(int ch)
 	/* 	prog_desc->program_pid, PMT_TABLE_ID, &filter_handle); */
 
 	// TODO: timed wait for pmt parser
-	pthread_mutex_lock(&pmt_mutex);
-	pthread_cond_wait(&pmt_condition, &pmt_mutex);
-	pthread_mutex_unlock(&pmt_mutex);
+	/* pthread_mutex_lock(&pmt_mutex); */
+	/* pthread_cond_wait(&pmt_condition, &pmt_mutex); */
+	/* pthread_mutex_unlock(&pmt_mutex); */
 
 	/* Demux_Unregister_Section_Filter_Callback(demux_pmt_callback); */
 	/* Demux_Free_Filter(player_handle, filter_handle); */
 
-	pmt_print(&pmt);
+	/* pmt_print(&pmt); */
 
 	// extract A/V ES PIDs
-	int audio_pid = pmt_get_audio_pid(&pmt);
-	int video_pid = pmt_get_video_pid(&pmt);
+	/* int audio_pid = pmt_get_audio_pid(&pmt); */
+	/* int video_pid = pmt_get_video_pid(&pmt); */
+  /*  */
+	/* printf("Audio pid: %d\n", audio_pid); */
+	/* printf("Video pid: %d\n", video_pid); */
 
-	printf("Audio pid: %d\n", audio_pid);
-	printf("Video pid: %d\n", video_pid);
-
-	if(current_ch != 0)
-	{
+	/* if(current_ch != 0) */
+	/* { */
 		// remove current stream
 		/* Player_Stream_Remove(player_handle, source_handle, stream_handle_V); */
 		/* Player_Stream_Remove(player_handle, source_handle, stream_handle_A); */
-	}
+	/* } */
 
 	/* Player_Stream_Create(player_handle, source_handle, */
 	/* 	video_pid, VIDEO_TYPE_MPEG2, &stream_handle_V); */

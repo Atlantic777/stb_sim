@@ -2,6 +2,8 @@
 #include <termios.h>
 #include <pthread.h>
 #include "input/keyboard.h"
+#include "input/keyboard_codes.h"
+#include "controller/norm_codes.h"
 
 static void (*_handler)(char);
 static int initialized = 0;
@@ -9,6 +11,30 @@ static int initialized = 0;
 static void kb_start();
 
 pthread_t kb_thread_id;
+
+static int isNum(char ev)
+{
+  if(ev >= '0' && ev <= '9')
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+static char normalize_code(char code)
+{
+  if(KB_KEY_EXIT == code)
+  {
+    return KEY_EXIT;
+  }
+  else if(isNum(code))
+  {
+    return code-48;
+  }
+}
 
 static int getch(void)
 {
@@ -82,7 +108,7 @@ static void *kb_loop(void *args)
 
   while(1) {
     kb_get_event(&ev);
-    _handler(ev);
+    _handler(normalize_code(ev));
   }
 }
 

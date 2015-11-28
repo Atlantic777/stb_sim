@@ -10,6 +10,14 @@ target_link_libraries(test_cli_view keyboard console controller pthread rt)
 if(NOT DEFINED CROSS_COMPILE)
   add_executable(test_afb_gl_view test_afb_gl_view.c)
   target_link_libraries(test_afb_gl_view keyboard controller gl_view)
+
+  add_executable(test_model_fake_and_gl_view test_model_fake_and_gl_view.c)
+  target_link_libraries(test_model_fake_and_gl_view
+    keyboard
+    controller
+    gl_view
+    fake_model
+    )
 endif()
 
 if(DEFINED CROSS_COMPILE)

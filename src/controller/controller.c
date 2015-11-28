@@ -5,9 +5,10 @@
 #include <time.h>
 #include "controller.h"
 #include "model.h"
+#include "controller/norm_codes.h"
 
 static view_t   *_view;
-static model_t  *_model; 
+static model_t  *_model;
 State _state;
 
 static void state_scan(signal_t, char);
@@ -90,7 +91,6 @@ static void state_num_enter(signal_t sig, char args)
   LOG("num enter");
   if(SIG_NUM_KEY == sig)
   {
-    // printf("number %d\n", args[0]-48);
     store_num(args);
   }
   else if(SIG_TIMEOUT == sig)
@@ -135,7 +135,7 @@ static void stop()
 
 static int isNum(char c)
 {
-  if(c >= 2 && c <= 10)
+  if(c >= 0 && c <= 9)
   {
     return 1;
   }
@@ -147,13 +147,12 @@ static int isNum(char c)
 
 static signal_t decode_signal(char ev)
 {
-	// TODO: create key codes table
   if(isNum(ev))
   {
     LOG("SIG_NUM_KEY");
     return SIG_NUM_KEY;
   }
-  else if(116 == ev)
+  else if(KEY_EXIT == ev)
   {
     LOG("SIG_KILL");
     return SIG_KILL;
@@ -162,12 +161,7 @@ static signal_t decode_signal(char ev)
 
 static void input_handler(char ev)
 {
-	LOG("input handler triggered");
-	puts("here");
-
   signal_t sig = decode_signal(ev);
-
-	printf("key %hhd\n", ev);
 
   if(SIG_KILL == sig)
   {
