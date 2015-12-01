@@ -35,7 +35,7 @@ int pat_parse(pat_table_t *pat, uint8_t *buff)
 
 		pid_up		= buff[offset+2] << 8;
 		pid_down	= buff[offset+3];
-		pid		= pid_up + pid_down;
+		pid		= (pid_up + pid_down) & 0x1FFF;
 		
 		current->program_number = prog;
 		current->program_pid = pid;
@@ -101,7 +101,7 @@ int pat_get_entry(int ch, pat_table_t *pat, program_desc_t **desc)
 	*desc = pat->programs->next;
 
 	int i;
-	for(i = 0; i < pat->programs_cnt; i++)
+	for(i = 0; i < ch; i++)
 	{
 		*desc	= (*desc)->next;
 	}

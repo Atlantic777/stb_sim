@@ -51,7 +51,7 @@ static void render_volume()
 static void *dfb_render_loop(void *args)
 {
 	// do clear
-	primary->SetColor(primary, 0x00, 0x00, 0x00, 0xff);
+	primary->SetColor(primary, 0x00, 0x00, 0x00, 0x00);
 	primary->FillRectangle(primary, 0, 0, screenWidth, screenHeight);
 
 	render_number_input();

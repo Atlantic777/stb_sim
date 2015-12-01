@@ -158,7 +158,8 @@ static signal_t decode_signal(char ev)
     LOG("SIG_NUM_KEY");
     return SIG_NUM_KEY;
   }
-  else if(KEY_EXIT == ev)
+  //else if(KEY_EXIT == ev)
+  else if('t' == ev)
   {
     LOG("SIG_KILL");
     return SIG_KILL;

@@ -29,7 +29,7 @@ if(DEFINED CROSS_COMPILE)
     remote
     dfb_view
     controller
-    model
+    real_model
     tdp
     OSAL
     shm

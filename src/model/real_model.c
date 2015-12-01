@@ -67,9 +67,15 @@ static int32_t demux_pmt_callback(uint8_t *buff)
 	pthread_mutex_unlock(&pmt_mutex);
 
 	puts("PMT parsed");
-	pmt_print(&pmt);
+	//pmt_print(&pmt);
 }
 // ##### END OF CALLBACKS ############
+//
+int stb_init_dummy()
+{
+	puts("stb dummy init!");
+	return 0;
+}
 
 int stb_init()
 {
@@ -89,6 +95,12 @@ int stb_init()
 	// move to scan
 	stb_scan();
 
+	return 0;
+}
+
+int stb_deinit_dummy()
+{
+	puts("stb dummy deinit");
 	return 0;
 }
 
@@ -126,11 +138,11 @@ int stb_get_ch_list()
 
 int stb_ch_switch(int ch)
 {
-	puts("switching chann");
+	ch = ch - 2;
+
 	program_desc_t *prog_desc;
 	pat_get_entry(ch, &pat, &prog_desc);
 
-	current_ch = ch;
 
 	Demux_Register_Section_Filter_Callback(demux_pmt_callback);
 	Demux_Set_Filter(player_handle,
@@ -153,12 +165,14 @@ int stb_ch_switch(int ch)
 	printf("Audio pid: %d\n", audio_pid);
 	printf("Video pid: %d\n", video_pid);
 
-	if(current_ch != 0)
+	if(current_ch == 1)
 	{
 		// remove current stream
 		Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
 		Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
 	}
+
+	current_ch = 1;
 
 	Player_Stream_Create(player_handle, source_handle,
 		video_pid, VIDEO_TYPE_MPEG2, &stream_handle_V);
