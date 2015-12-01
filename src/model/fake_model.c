@@ -3,6 +3,9 @@
 #include "model/fake_model.h"
 #include "parsers/pat_parser.h"
 #include "parsers/pmt_parser.h"
+/* #include "model/fake_stb.h" */
+/* #include "parsers/example_pat.h" */
+/* #include "parsers/example_pmt.h" */
 #include <stdio.h>
 
 #define DESIRED_FREQUENCY 754000000
@@ -76,17 +79,17 @@ static int32_t demux_pmt_callback(uint8_t *buff)
 int stb_fake_init()
 {
 	puts("stb init");
-	/* Tuner_Init(); */
+	/* Tuner_Init(); */ // fail randomly
 	/* Tuner_Register_Status_Callback(lock_status_callback); */
-	/* Tuner_Lock_To_Frequency(DESIRED_FREQUENCY, BANDWIDTH, DVB_T); */
+	/* Tuner_Lock_To_Frequency(DESIRED_FREQUENCY, BANDWIDTH, DVB_T); */ // random wait
 
 	// TODO: add timed wait
 	/* pthread_mutex_lock(&status_mutex); */
 	/* pthread_cond_wait(&status_condition, &status_mutex); */
 	/* pthread_mutex_unlock(&status_mutex); */
 
-	/* Player_Init(&player_handle); */
-	/* Player_Source_Open(player_handle, &source_handle); */
+	/* Player_Init(&player_handle); */ // fail randomly
+	/* Player_Source_Open(player_handle, &source_handle); */ // fail randomly
 
 	// move to scan
 	/* stb_fake_scan(); */
@@ -107,6 +110,7 @@ int stb_fake_scan()
 {
 	/* Demux_Register_Section_Filter_Callback(demux_pat_callback); */
 	/* Demux_Set_Filter(player_handle, PAT_PID, PAT_TABLE_ID, &filter_handle); */
+  // sched callback call with random wait or never, do repeat until deregister
 
 	// TODO: add timed wait
 	pthread_mutex_lock(&pat_mutex);

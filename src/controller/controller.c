@@ -1,3 +1,9 @@
+/**
+ * @file controller.c
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Implementation of STB controller part of MVC
+ */
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -172,6 +178,7 @@ static void input_handler(char ev)
   _state(sig, ev);
 }
 
+/// \brief Nothing to see here
 int ctrl_init(controller_t *ctrl)
 {
   ctrl->start     = start;
@@ -202,6 +209,13 @@ int ctrl_deinit()
   return 1;
 }
 
+/**
+ * @brief Sets active view
+ *
+ * @param view pointer
+ *
+ * @return  status code
+ */
 int ctrl_set_view(view_t *view)
 {
   _view = view;

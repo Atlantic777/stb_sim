@@ -3,6 +3,10 @@
 
 typedef enum kb_codes {
   KB_KEY_EXIT = 'q',
+  KB_KEY_CH_UP = 'j',
+  KB_KEY_CH_DN = 'k',
+  KB_KEY_VOL_UP = 'h',
+  KB_KEY_VOL_DN = 'l',
 } kb_codes_t;
 
 #endif
