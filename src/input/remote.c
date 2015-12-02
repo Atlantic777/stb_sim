@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <termios.h>
 #include <pthread.h>
-#include "input/remote.h"
-#include <linux/input.h>
 #include <fcntl.h>
+#include <linux/input.h>
+#include "input/remote.h"
+#include "input/remote_codes.h"
+#include "controller/norm_codes.h"
 
-static void (*_handler)(char);
+static void (*_handler)(uint32_t);
 static int initialized = 0;
 
 static void rc_start();
@@ -15,25 +17,14 @@ pthread_t rc_thread_id;
 static const char* dev = "/dev/input/event0";
 static int input_file_desc;
 
-static int getch(void)
+static uint32_t getch()
 {
-	/*
-  int ch;
-  struct termios oldt;
-  struct termios newt;
-  tcgetattr(0, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(0, TCSANOW, &newt);
-  ch = getchar();
-  tcsetattr(0, TCSANOW, &oldt);
-	*/
-
 	struct input_event ev;
 	read(input_file_desc, &ev, sizeof(struct input_event));
 
 	if(ev.type == 1 && ev.value == 0)
 	{
+		printf("code inside remote: %d\n", ev.code); 
 		return ev.code;
 	}
 	else
@@ -42,11 +33,56 @@ static int getch(void)
 	}
 }
 
-int rc_get_event(char *ev)
+static uint32_t to_number(uint32_t ev)
+{
+	if(ev >= 2 && ev <= 10)
+	{
+		return ev-1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+static uint32_t normalize(uint32_t ev)
+{
+	printf("normalizing %d\n", ev);
+
+	if(ev >= 2 && ev <= 11)
+	{
+		puts("remote: got key exit");
+		return to_number(ev);
+	}
+	else if(RC_KEY_EXIT == ev)
+	{
+		puts("returning exit key");
+		return  N_KEY_EXIT;
+	}
+	else if(RC_KEY_CH_UP == ev)
+	{
+		return N_KEY_CH_UP;
+	}
+	else if(RC_KEY_CH_DN == ev)
+	{
+		return N_KEY_CH_DN;
+	}
+	else if(RC_KEY_VOL_UP == ev)
+	{
+		return N_KEY_VOL_UP;
+	}
+	else if(RC_KEY_VOL_DN == ev)
+	{
+		return N_KEY_VOL_DN;
+	}
+}
+
+int rc_get_event(uint32_t *ev)
 {
   if(0 != initialized)
   {
-    *ev = getch();
+    *ev = normalize(getch());
+		printf("norm: %d %d\n", *ev, KEY_EXIT);
   }
   else
   {
@@ -90,7 +126,7 @@ int rc_deinit(input_t *input)
   return 0;
 }
 
-int rc_set_callback(void(*handler)(char))
+int rc_set_callback(void(*handler)(uint32_t))
 {
   _handler = handler;
   return 0;
@@ -98,13 +134,14 @@ int rc_set_callback(void(*handler)(char))
 
 static void *rc_loop(void *args)
 {
-  char ev;
+  uint32_t ev;
 
   while(1) {
     rc_get_event(&ev);
 
 		if(ev != 255)
 		{
+			printf("calling handler with: %d\n", ev);
 			_handler(ev);
 		}
   }

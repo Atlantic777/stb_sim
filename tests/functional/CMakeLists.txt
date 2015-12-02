@@ -35,4 +35,7 @@ if(DEFINED CROSS_COMPILE)
     shm
     PEAgent
   )
+
+	add_executable(test_rc_input test_rc_input.c)
+	target_link_libraries(test_rc_input remote)
 endif()

@@ -2,11 +2,12 @@
 #define KEYBOARD_H
 
 #include "input.h"
+#include <stdint.h>
 
 int rc_init(input_t*);
 int rc_deinit();
 
-int rc_get_event(char *ev);
-int rc_set_callback(void(*start)(char));
+int rc_get_event(uint32_t *ev);
+int rc_set_callback(void(*start)(uint32_t));
 
 #endif

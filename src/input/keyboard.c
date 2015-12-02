@@ -5,14 +5,14 @@
 #include "input/keyboard_codes.h"
 #include "controller/norm_codes.h"
 
-static void (*_handler)(char);
+static void (*_handler)(uint32_t);
 static int initialized = 0;
 
 static void kb_start();
 
 pthread_t kb_thread_id;
 
-static int isNum(char ev)
+static int isNum(uint32_t ev)
 {
   if(ev >= '0' && ev <= '9')
   {
@@ -24,11 +24,11 @@ static int isNum(char ev)
   }
 }
 
-static char normalize_code(char code)
+static char normalize_code(uint32_t code)
 {
   if(KB_KEY_EXIT == code)
   {
-    return KEY_EXIT;
+    return N_KEY_EXIT;
   }
   else if(isNum(code))
   {
@@ -36,7 +36,7 @@ static char normalize_code(char code)
   }
 }
 
-static int getch(void)
+static uint32_t getch(void)
 {
   int ch;
   struct termios oldt;
@@ -50,7 +50,7 @@ static int getch(void)
   return ch;
 }
 
-int kb_get_event(char *ev)
+int kb_get_event(uint32_t *ev)
 {
   if(0 != initialized)
   {
@@ -96,7 +96,7 @@ int kb_deinit(input_t *input)
   return 0;
 }
 
-int kb_set_callback(void(*handler)(char))
+int kb_set_callback(void(*handler)(uint32_t))
 {
   _handler = handler;
   return 0;
@@ -104,7 +104,7 @@ int kb_set_callback(void(*handler)(char))
 
 static void *kb_loop(void *args)
 {
-  char ev;
+  uint32_t ev;
 
   while(1) {
     kb_get_event(&ev);
