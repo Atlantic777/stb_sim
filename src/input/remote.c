@@ -24,7 +24,6 @@ static uint32_t getch()
 
 	if(ev.type == 1 && ev.value == 0)
 	{
-		printf("code inside remote: %d\n", ev.code); 
 		return ev.code;
 	}
 	else
@@ -47,16 +46,12 @@ static uint32_t to_number(uint32_t ev)
 
 static uint32_t normalize(uint32_t ev)
 {
-	printf("normalizing %d\n", ev);
-
 	if(ev >= 2 && ev <= 11)
 	{
-		puts("remote: got key exit");
 		return to_number(ev);
 	}
 	else if(RC_KEY_EXIT == ev)
 	{
-		puts("returning exit key");
 		return  N_KEY_EXIT;
 	}
 	else if(RC_KEY_CH_UP == ev)
@@ -82,7 +77,6 @@ int rc_get_event(uint32_t *ev)
   if(0 != initialized)
   {
     *ev = normalize(getch());
-		printf("norm: %d %d\n", *ev, KEY_EXIT);
   }
   else
   {
@@ -141,7 +135,6 @@ static void *rc_loop(void *args)
 
 		if(ev != 255)
 		{
-			printf("calling handler with: %d\n", ev);
 			_handler(ev);
 		}
   }

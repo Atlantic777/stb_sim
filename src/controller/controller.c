@@ -40,24 +40,23 @@ static void vol_down();
 
 static void next_chan()
 {
-	puts("switching to next chan");
-	_model->ch_switch(++current_chan);
+	_model->ch_up();
 }
 
 static void prev_chan()
 {
-	puts("switching to prev chan");
-	_model->ch_switch(--current_chan);
+	_model->ch_down();
 }
 
 static void vol_up()
 {
-	puts("volume up");
+	_model->vol_up();
 }
 
 static void vol_down()
 {
-	puts("volume down");
+	_model->vol_down();
+	//_view->show_volume(_model->get_volume());
 }
 
 static void process_input_buffer()
@@ -205,7 +204,6 @@ static int isNum(uint32_t c)
 
 static signal_t decode_signal(uint32_t ev)
 {
-	printf("decoding %d\n", ev);
   if(isNum(ev))
   {
     LOG("SIG_NUM_KEY");
@@ -213,18 +211,15 @@ static signal_t decode_signal(uint32_t ev)
   }
   else if(N_KEY_EXIT == ev)
   {
-		puts("decoded exit");
     LOG("SIG_KILL");
     return SIG_KILL;
   }
 	else if(N_KEY_CH_UP == ev || N_KEY_CH_DN == ev)
 	{
-		puts("ch change sig");
 		return SIG_CH_CHANGE;
 	}
 	else if(N_KEY_VOL_UP == ev || N_KEY_VOL_DN == ev)
 	{
-		puts("vol change sig");
 		return SIG_VOL_CHANGE;
 	}
 }
@@ -232,7 +227,6 @@ static signal_t decode_signal(uint32_t ev)
 static void input_handler(uint32_t ev)
 {
   signal_t sig = decode_signal(ev);
-	puts("input handler");
 
   if(SIG_KILL == sig)
   {

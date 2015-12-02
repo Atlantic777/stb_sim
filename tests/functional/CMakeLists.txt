@@ -30,10 +30,6 @@ if(DEFINED CROSS_COMPILE)
     dfb_view
     controller
     real_model
-    tdp
-    OSAL
-    shm
-    PEAgent
   )
 
 	add_executable(test_rc_input test_rc_input.c)

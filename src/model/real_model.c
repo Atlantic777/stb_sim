@@ -4,12 +4,15 @@
 #include "model/real_model.h"
 #include "parsers/pat_parser.h"
 #include "parsers/pmt_parser.h"
+#include "parsers/sdt_parser.h"
 
 #define DESIRED_FREQUENCY 754000000
 #define BANDWIDTH 8
 #define PAT_PID 0
+#define SDT_PID 0x11
 #define PAT_TABLE_ID 0
 #define PMT_TABLE_ID 2
+#define SDT_TABLE_ID 0x42
 
 static int32_t current_ch = 0;
 
@@ -33,11 +36,15 @@ static pthread_mutex_t pat_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t pmt_condition = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t pmt_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+static pthread_cond_t sdt_condition = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t sdt_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 static uint32_t player_handle, source_handle, filter_handle;
 static uint32_t stream_handle_A, stream_handle_V;
 
 static pat_table_t pat;
 static pmt_table_t pmt;
+static sdt_table_t sdt;
 
 // ######## CALLBACKS ##############
 
@@ -63,8 +70,15 @@ static int32_t demux_pmt_callback(uint8_t *buff)
 	pthread_cond_signal(&pmt_condition);
 	pthread_mutex_unlock(&pmt_mutex);
 }
+
+static int32_t demux_sdt_callback(uint8_t *buff)
+{
+	pthread_mutex_lock(&sdt_mutex);
+	sdt_parse(&sdt, buff);
+	pthread_cond_signal(&sdt_condition);
+	pthread_mutex_unlock(&sdt_mutex);
+}
 // ##### END OF CALLBACKS ############
-//
 int stb_init()
 {
 	puts("stb init");
@@ -97,6 +111,7 @@ int stb_deinit()
 
 int stb_scan()
 {
+	// parse PAT
 	Demux_Register_Section_Filter_Callback(demux_pat_callback);
 	Demux_Set_Filter(player_handle, PAT_PID, PAT_TABLE_ID, &filter_handle);
 
@@ -107,6 +122,19 @@ int stb_scan()
 
 	Demux_Unregister_Section_Filter_Callback(demux_pat_callback);
 	Demux_Free_Filter(player_handle, filter_handle);
+
+	// parse SDT
+	Demux_Register_Section_Filter_Callback(demux_sdt_callback);
+	Demux_Set_Filter(player_handle, SDT_PID, SDT_TABLE_ID, &filter_handle);
+	
+	pthread_mutex_lock(&sdt_mutex);
+	pthread_cond_wait(&sdt_condition, &sdt_mutex);
+	pthread_mutex_unlock(&sdt_mutex);
+
+	Demux_Unregister_Section_Filter_Callback(demux_sdt_callback);
+	Demux_Free_Filter(player_handle, filter_handle);
+	
+	puts("Got SDT!");
 }
 
 int stb_get_current_ch()
@@ -121,8 +149,6 @@ int stb_get_ch_list()
 int stb_ch_switch(int ch)
 {
 	// TODO: ugly
-	ch = ch - 2;
-
 	program_desc_t *prog_desc;
 	pat_get_entry(ch, &pat, &prog_desc);
 
@@ -189,6 +215,7 @@ void stb_model_init(model_t *model)
 
 	model->vol_up	= stb_vol_up;
 	model->vol_down	= stb_vol_down;
+	//model->get_volume = stb_vol;
 
 	model->ch_switch = stb_ch_switch;
 }
