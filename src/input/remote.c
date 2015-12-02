@@ -34,7 +34,6 @@ static int getch(void)
 
 	if(ev.type == 1 && ev.value == 0)
 	{
-		printf("RemoteControl: %c\n", ev.code);
 		return ev.code;
 	}
 	else
@@ -48,7 +47,6 @@ int rc_get_event(char *ev)
   if(0 != initialized)
   {
     *ev = getch();
-		puts("ffs");
   }
   else
   {

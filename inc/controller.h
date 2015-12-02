@@ -1,7 +1,7 @@
 #ifndef CONTOLLER_H
 #define CONTROLLER_H
 
-#define CTRL_DEBUG 1
+#define CTRL_DEBUG 0
 
 #if CTRL_DEBUG == 1
   #define LOG(MSG) _view->log("CTRL -> " MSG)

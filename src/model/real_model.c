@@ -54,9 +54,6 @@ static int32_t demux_pat_callback(uint8_t *buff)
 	pat_parse(&pat, buff);
 	pthread_cond_signal(&pat_condition);
 	pthread_mutex_unlock(&pat_mutex);
-
-	puts("PAT parsed");
-	pat_print(&pat);
 }
 
 static int32_t demux_pmt_callback(uint8_t *buff)
@@ -65,18 +62,9 @@ static int32_t demux_pmt_callback(uint8_t *buff)
 	pmt_parse(&pmt, buff);
 	pthread_cond_signal(&pmt_condition);
 	pthread_mutex_unlock(&pmt_mutex);
-
-	puts("PMT parsed");
-	//pmt_print(&pmt);
 }
 // ##### END OF CALLBACKS ############
 //
-int stb_init_dummy()
-{
-	puts("stb dummy init!");
-	return 0;
-}
-
 int stb_init()
 {
 	puts("stb init");
@@ -95,12 +83,6 @@ int stb_init()
 	// move to scan
 	stb_scan();
 
-	return 0;
-}
-
-int stb_deinit_dummy()
-{
-	puts("stb dummy deinit");
 	return 0;
 }
 
@@ -138,6 +120,7 @@ int stb_get_ch_list()
 
 int stb_ch_switch(int ch)
 {
+	// TODO: ugly
 	ch = ch - 2;
 
 	program_desc_t *prog_desc;
@@ -156,18 +139,12 @@ int stb_ch_switch(int ch)
 	Demux_Unregister_Section_Filter_Callback(demux_pmt_callback);
 	Demux_Free_Filter(player_handle, filter_handle);
 
-	pmt_print(&pmt);
-
 	// extract A/V ES PIDs
 	int audio_pid = pmt_get_audio_pid(&pmt);
 	int video_pid = pmt_get_video_pid(&pmt);
 
-	printf("Audio pid: %d\n", audio_pid);
-	printf("Video pid: %d\n", video_pid);
-
 	if(current_ch == 1)
 	{
-		// remove current stream
 		Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
 		Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
 	}
