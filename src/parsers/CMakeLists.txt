@@ -8,3 +8,5 @@ add_library(sdt_parser sdt_parser.c)
 target_link_libraries(sdt_parser parser_utils)
 
 add_library(parser_utils parser_utils.c)
+
+add_library(init_config_parser init_config_parser.c)
