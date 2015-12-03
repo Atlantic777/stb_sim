@@ -9,6 +9,7 @@ typedef struct model {
 
 	int (*get_current_ch)();
 	int (*get_ch_list)();
+  int (*get_volume)();
 
 	int (*ch_switch)(int ch);
 	int (*ch_up)();

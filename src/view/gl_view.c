@@ -124,6 +124,14 @@ static void gl_view_start()
   pthread_detach(th_opengl_id);
 }
 
+static void gl_show_volume(uint8_t vol)
+{
+}
+
+static void gl_hide_volume()
+{
+}
+
 int gl_view_init(view_t *view)
 {
   view->log = gl_view_log;
@@ -134,6 +142,9 @@ int gl_view_init(view_t *view)
 
   view->show_info_bar = gl_show_info_bar;
   view->hide_info_bar = gl_hide_info_bar;
+
+  view->show_volume = gl_show_volume;
+  view->hide_volume = gl_hide_volume;
 
   return 0;
 }

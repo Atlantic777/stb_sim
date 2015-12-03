@@ -55,7 +55,7 @@ static void vol_up()
 static void vol_down()
 {
 	_model->vol_down();
-	//_view->show_volume(_model->get_volume());
+	_view->show_volume(_model->get_volume());
 }
 
 static void process_input_buffer()

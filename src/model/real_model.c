@@ -109,6 +109,11 @@ int stb_deinit()
 	return 0;
 }
 
+static int stb_get_vol()
+{
+  return 0;
+}
+
 int stb_scan()
 {
 	// parse PAT
@@ -126,14 +131,14 @@ int stb_scan()
 	// parse SDT
 	Demux_Register_Section_Filter_Callback(demux_sdt_callback);
 	Demux_Set_Filter(player_handle, SDT_PID, SDT_TABLE_ID, &filter_handle);
-	
+
 	pthread_mutex_lock(&sdt_mutex);
 	pthread_cond_wait(&sdt_condition, &sdt_mutex);
 	pthread_mutex_unlock(&sdt_mutex);
 
 	Demux_Unregister_Section_Filter_Callback(demux_sdt_callback);
 	Demux_Free_Filter(player_handle, filter_handle);
-	
+
 	puts("Got SDT!");
 }
 
@@ -215,7 +220,7 @@ void stb_model_init(model_t *model)
 
 	model->vol_up	= stb_vol_up;
 	model->vol_down	= stb_vol_down;
-	//model->get_volume = stb_vol;
+	model->get_volume = stb_get_vol;
 
 	model->ch_switch = stb_ch_switch;
 }

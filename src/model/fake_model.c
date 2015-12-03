@@ -191,6 +191,11 @@ int stb_fake_vol_down()
 {
 }
 
+static int stb_fake_get_vol()
+{
+  return 0;
+}
+
 void stb_fake_model_init(model_t *model)
 {
 	model->init	= stb_fake_init;
@@ -204,6 +209,7 @@ void stb_fake_model_init(model_t *model)
 
 	model->vol_up	= stb_fake_vol_up;
 	model->vol_down	= stb_fake_vol_down;
+  model->get_volume = stb_fake_get_vol;
 
 	model->ch_switch = stb_fake_ch_switch;
 }
