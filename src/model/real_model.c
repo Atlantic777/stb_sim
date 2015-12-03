@@ -6,7 +6,9 @@
 #include "parsers/pmt_parser.h"
 #include "parsers/sdt_parser.h"
 #include "parsers/init_config_parser.h"
+#include "model/service_list.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #define DESIRED_FREQUENCY 754000000
 #define BANDWIDTH 8
@@ -50,6 +52,7 @@ static uint32_t stream_handle_A, stream_handle_V;
 static pat_table_t pat;
 static pmt_table_t pmt;
 static sdt_table_t sdt;
+static service_table_t services;
 
 // ######## CALLBACKS ##############
 
@@ -186,6 +189,7 @@ int stb_scan()
 	Demux_Free_Filter(player_handle, filter_handle);
 
 	puts("Got PAT!");
+	pat2services(&pat, &services);
 
 	// parse SDT
 	/*
@@ -200,7 +204,7 @@ int stb_scan()
 	Demux_Free_Filter(player_handle, filter_handle);
 	*/
 
-	puts("Got SDT!");
+	// puts("Got SDT!");
 
   // TODO: fill services table
   // [ ] create services table from a pat table
@@ -224,12 +228,18 @@ int stb_ch_switch(int ch)
 {
 	// TODO: ugly
   // read from services table
+  /*
 	program_desc_t *prog_desc;
 	pat_get_entry(ch, &pat, &prog_desc);
+	*/
+		
+	ch = ch-1;
+	uint32_t pmt_pid = services.items[ch].pmt_pid;
+	printf("ch: %d - pmt: %d\n",  ch, pmt_pid);
 
 	Demux_Register_Section_Filter_Callback(demux_pmt_callback);
 	Demux_Set_Filter(player_handle,
-		prog_desc->program_pid, PMT_TABLE_ID, &filter_handle);
+		pmt_pid, PMT_TABLE_ID, &filter_handle);
 
 	// TODO: timed wait for pmt parser
 	pthread_mutex_lock(&pmt_mutex);

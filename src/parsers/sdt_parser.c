@@ -14,8 +14,8 @@ int sdt_parse(sdt_table_t *sdt, uint8_t *buff)
 
 	// first service_id is at 11
 	sdt->services_cnt = 0;
-	sdt->services = malloc(sizeof(service_item_t));
-	service_item_t *current_item = sdt->services;
+	sdt->services = malloc(sizeof(service_loop_item_t));
+	service_loop_item_t *current_item = sdt->services;
 	service_desc_t *current_desc;
 
 	int cursor = 11;

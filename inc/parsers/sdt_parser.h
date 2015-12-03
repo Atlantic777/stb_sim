@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef struct sdt_table sdt_table_t;
-typedef struct service_item service_item_t;
+typedef struct service_loop_item service_loop_item_t;
 typedef struct service_desc service_desc_t;
 
 struct sdt_table {
@@ -17,10 +17,10 @@ struct sdt_table {
 	uint8_t reserved_future_use;
 
 	uint8_t services_cnt;
-	service_item_t *services;
+	service_loop_item_t *services;
 };
 
-struct service_item {
+struct service_loop_item {
 	uint16_t service_id;
 	uint8_t reserved_future_use;
 	uint8_t EIT_schedule_flag;
@@ -32,7 +32,7 @@ struct service_item {
 	uint8_t descriptors_cnt;
 	service_desc_t *descriptors;
 
-	service_item_t *next;
+	service_loop_item_t *next;
 };
 
 struct service_desc {
