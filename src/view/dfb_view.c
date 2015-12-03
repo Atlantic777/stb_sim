@@ -124,6 +124,7 @@ static void dfb_view_start()
 	dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf",
 		&fontDescription, &fontInterface);
 
+	/*
 	dfbInterface->CreateImageProvider(dfbInterface, "dfblogo_alpha.png", &provider);
 	provider->GetSurfaceDescription(provider, &surfaceDesc);
 	dfbInterface->CreateSurface(dfbInterface, &surfaceDesc, &logoSurface);
@@ -131,6 +132,7 @@ static void dfb_view_start()
 	provider->RenderTo(provider, logoSurface, NULL);
 	provider->Release(provider);
 	logoSurface->GetSize(logoSurface, &logoWidth, &logoHeight);
+	*/ 
 
 	primary->SetFont(primary, fontInterface);
 }

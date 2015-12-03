@@ -70,6 +70,10 @@ static uint32_t normalize(uint32_t ev)
 	{
 		return N_KEY_VOL_DN;
 	}
+	else if(RC_KEY_INFO == ev)
+	{
+		return N_KEY_INFO;
+	}
 }
 
 int rc_get_event(uint32_t *ev)

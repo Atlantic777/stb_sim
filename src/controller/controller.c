@@ -134,7 +134,7 @@ static void state_idle(signal_t sig, uint32_t args)
     store_num(args);
     _state = state_num_enter;
   }
-	if(SIG_CH_CHANGE == sig)
+	else if(SIG_CH_CHANGE == sig)
 	{
 		if(N_KEY_CH_UP == args)
 		{
@@ -145,7 +145,7 @@ static void state_idle(signal_t sig, uint32_t args)
 			prev_chan();
 		}
 	}
-	if(SIG_VOL_CHANGE == sig)
+	else if(SIG_VOL_CHANGE == sig)
 	{
 		if(N_KEY_VOL_UP == args)
 		{
@@ -155,6 +155,10 @@ static void state_idle(signal_t sig, uint32_t args)
 		{
 			vol_down();
 		}
+	}
+	else if(SIG_INFO == sig)
+	{
+		_view->show_info_bar(_model->get_current_ch());
 	}
   LOG("Idle state...");
 }
@@ -243,6 +247,10 @@ static signal_t decode_signal(uint32_t ev)
 	else if(N_KEY_VOL_UP == ev || N_KEY_VOL_DN == ev)
 	{
 		return SIG_VOL_CHANGE;
+	}
+	else if(N_KEY_INFO == ev)
+	{
+		return SIG_INFO;
 	}
 }
 

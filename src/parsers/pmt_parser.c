@@ -69,24 +69,28 @@ int pmt_print(pmt_table_t *pmt)
 int pmt_get_audio_pid(pmt_table_t *pmt)
 {
 	stream_t *current = pmt->streams;
+	int retval = -1;
 
 	int i;
 	for(i = 0; i < pmt->streams_cnt; i++)
 	{
 		if(current->stream_type == AUDIO_TYPE)
 		{
-			return current->elementary_pid;
+			retval = current->elementary_pid;
 		}
 		else
 		{
 			current = current->next;
 		}
 	}
+
+	return retval;
 }
 
 int pmt_get_video_pid(pmt_table_t *pmt)
 {
 	stream_t *current = pmt->streams;
+	int retval = -1;
 
 	int i;
 	for(i = 0; i < pmt->streams_cnt; i++)
@@ -96,11 +100,14 @@ int pmt_get_video_pid(pmt_table_t *pmt)
 
 		if(current->stream_type == VIDEO_TYPE)
 		{
-			return current->elementary_pid;
+			retval = current->elementary_pid;
+			break;
 		}
 		else
 		{
 			current = current->next;
 		}
 	}
+
+	return retval;
 }

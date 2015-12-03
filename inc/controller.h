@@ -20,6 +20,7 @@ typedef enum singal {
   SIG_TIMEOUT,
 	SIG_CH_CHANGE,
 	SIG_VOL_CHANGE,
+	SIG_INFO
 } signal_t;
 
 typedef struct controller {

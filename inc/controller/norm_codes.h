@@ -19,7 +19,9 @@ typedef enum norm_codes {
   N_KEY_CH_DN = 21,
 
   N_KEY_VOL_UP = 22,
-  N_KEY_VOL_DN = 23
+  N_KEY_VOL_DN = 23,
+
+	N_KEY_INFO = 30,
 } norm_codes_t;
 
 #endif

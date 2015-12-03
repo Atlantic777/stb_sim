@@ -38,6 +38,8 @@ static int stb_ch_down();
 static int stb_vol_up();
 static int stb_vol_down();
 
+static int audio_set, video_set;
+
 static pthread_cond_t status_condition = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t status_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -157,6 +159,9 @@ int stb_init(char *filepath)
 	Player_Stream_Create(player_handle, source_handle,
 		config.aPID, AudioType, &stream_handle_A);
 
+	audio_set = 1;
+	video_set = 1;
+
 	// move to scan
 	stb_scan();
 
@@ -210,7 +215,7 @@ int stb_scan()
 	// puts("Got SDT!");
 
   // TODO: fill services table
-  // [ ] create services table from a pat table
+  // [x] create services table from a pat table
   // [ ] fill services table with sdt info
 }
 
@@ -225,14 +230,14 @@ int stb_get_ch_list()
 }
 
 // TODO: make it thread safe
-// update current ch
-// spawn a new thread
-// call zapp handler
 int stb_ch_switch(int ch)
 {
 	ch = ch-1;
+
+	if(ch < 0 || ch >= services.cnt)
+		return -1;
+
 	uint32_t pmt_pid = services.items[ch].pmt_pid;
-	printf("ch: %d - pmt: %d\n",  ch, pmt_pid);
 
 	Demux_Register_Section_Filter_Callback(demux_pmt_callback);
 	Demux_Set_Filter(player_handle,
@@ -250,19 +255,34 @@ int stb_ch_switch(int ch)
 	int audio_pid = pmt_get_audio_pid(&pmt);
 	int video_pid = pmt_get_video_pid(&pmt);
 
-  // not working always, better flag
-  // separate those handlers
-	Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
-	Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
+	if(video_set == 1)
+	{
+		Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
+		video_set = 0;
+	}
+
+	if(audio_set == 1)
+	{
+		Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
+		audio_set = 0;
+	}
 
 	current_ch = ch;
 
   // don't set video stream if service is not of a video type
-	Player_Stream_Create(player_handle, source_handle,
-		video_pid, VideoType, &stream_handle_V);
+	if(video_pid != -1)
+	{
+		Player_Stream_Create(player_handle, source_handle,
+			video_pid, VideoType, &stream_handle_V);
+		video_set = 1;
+	}
 
-	Player_Stream_Create(player_handle, source_handle,
-		audio_pid, AudioType, &stream_handle_A);
+	if(audio_pid != -1)
+	{
+		Player_Stream_Create(player_handle, source_handle,
+			audio_pid, AudioType, &stream_handle_A);
+		audio_set = 1;
+	}
 }
 
 int stb_ch_up()
@@ -289,7 +309,6 @@ int stb_vol_up()
 		current_vol += 10;
 	}
 	
-	printf("current: %d - db: %d\n", current_vol, to_db(current_vol));
 	Player_Volume_Set(player_handle, current_vol*VOL_CONST);
 }
 
@@ -300,11 +319,9 @@ int stb_vol_down()
 		current_vol -= 10;
 	}
 
-	printf("current: %d - db: %d\n", current_vol, to_db(current_vol));
 	Player_Volume_Set(player_handle, current_vol*VOL_CONST);
 }
 
-// TODO: add this to model iface
 int stb_vol_mute()
 {
 	if(mute_state == 1)
