@@ -9,7 +9,7 @@ view_t        dfb;
 model_t	    	model;
 controller_t  ctrl;
 
-int main()
+int main(int argc, char **argv)
 {
   rc_init(&remote);
   stb_model_init(&model);
@@ -24,7 +24,18 @@ int main()
 
   dfb.start();
 
-  ctrl.start();
+	if(argc == 1)
+	{
+		puts("Don't have file config");
+		//ctrl.start(NULL);
+		return -1;
+	}
+	else
+	{
+		puts("Have config filepath");
+		ctrl.start(argv[1]);
+	}
+
   remote.start();
 	model.deinit();
 	puts("finish");

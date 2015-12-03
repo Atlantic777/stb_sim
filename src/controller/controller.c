@@ -175,11 +175,11 @@ static void state_num_enter(signal_t sig, uint32_t args)
 }
 
 // ########### ONE SHOT ##############
-static void boot()
+static void boot(char *filepath)
 {
   LOG("Booting...");
   // TODO: pass A/V stream types from init config
-	_model->init();
+	_model->init(filepath);
 }
 
 static void parse_config()
@@ -195,14 +195,12 @@ static void switch_default()
 }
 
 // ####### PUBLIC ##############
-static void start()
+static void start(char *init_file_path)
 {
   LOG("Hello from ctrl start");
 
-  boot();
-
-  // TODO: pass config file path
-  parse_config();
+  boot(init_file_path);
+	puts(init_file_path);
 
   switch_default();
 

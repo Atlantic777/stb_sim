@@ -19,6 +19,6 @@ int main()
 
   console.start();
 
-  ctrl.start();
+  ctrl.start(NULL);
   keyboard.start();
 }

@@ -23,7 +23,7 @@ typedef enum singal {
 } signal_t;
 
 typedef struct controller {
-  void (*start)();
+  void (*start)(char*);
   void (*stop)();
   void (*handler)(uint32_t);
 } controller_t;

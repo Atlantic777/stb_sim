@@ -2,7 +2,7 @@
 #define MODEL_H
 
 typedef struct model {
-	int (*init)();
+	int (*init)(char*);
 	int (*deinit)();
 
 	int (*scan)();

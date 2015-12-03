@@ -5,6 +5,8 @@
 #include "parsers/pat_parser.h"
 #include "parsers/pmt_parser.h"
 #include "parsers/sdt_parser.h"
+#include "parsers/init_config_parser.h"
+#include <stdio.h>
 
 #define DESIRED_FREQUENCY 754000000
 #define BANDWIDTH 8
@@ -15,6 +17,9 @@
 #define SDT_TABLE_ID 0x42
 
 static int32_t current_ch = 0;
+
+static int32_t VideoType;
+static int32_t AudioType;
 
 static int stb_scan();
 static int stb_get_current_ch();
@@ -79,12 +84,57 @@ static int32_t demux_sdt_callback(uint8_t *buff)
 	pthread_mutex_unlock(&sdt_mutex);
 }
 // ##### END OF CALLBACKS ############
-int stb_init()
+int stb_init(char *filepath)
 {
 	puts("stb init");
+
+	// read whole file
+	FILE *f = fopen(filepath, "rb");
+
+	fseek(f, 0, SEEK_END);
+	long fsize = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	char *string = malloc(fsize + 1);
+	fread(string, fsize, 1, f);
+	fclose(f);
+
+	string[fsize] = 0;
+
+	init_config_t config;
+	parse_init_config(string, &config);
+
 	Tuner_Init();
 	Tuner_Register_Status_Callback(lock_status_callback);
-	Tuner_Lock_To_Frequency(DESIRED_FREQUENCY, BANDWIDTH, DVB_T);
+
+	t_Module module;
+	if(config.module == INIT_DVB_T)
+	{
+		module = DVB_T;
+	}
+	else
+	{
+		module = DVB_T2;
+	}
+
+	if(config.aType == INIT_MPEG)
+	{
+		AudioType = AUDIO_TYPE_MPEG_AUDIO;
+	}
+	else
+	{
+		AudioType = AUDIO_TYPE_DOLBY_AC3;
+	}
+
+	if(config.vType == INIT_MPEG2)
+	{
+		VideoType = VIDEO_TYPE_MPEG2;
+	}
+	else
+	{
+		VideoType = VIDEO_TYPE_MPEG4;
+	}
+
+	Tuner_Lock_To_Frequency(config.frequency, config.bandwidth, module);
 
 	// TODO: add timed wait
 	pthread_mutex_lock(&status_mutex);
@@ -93,6 +143,13 @@ int stb_init()
 
 	Player_Init(&player_handle);
 	Player_Source_Open(player_handle, &source_handle);
+
+	// set default a/v streams
+	Player_Stream_Create(player_handle, source_handle,
+		config.vPID, VideoType, &stream_handle_V);
+
+	Player_Stream_Create(player_handle, source_handle,
+		config.aPID, AudioType, &stream_handle_A);
 
 	// move to scan
 	stb_scan();
@@ -128,7 +185,10 @@ int stb_scan()
 	Demux_Unregister_Section_Filter_Callback(demux_pat_callback);
 	Demux_Free_Filter(player_handle, filter_handle);
 
+	puts("Got PAT!");
+
 	// parse SDT
+	/*
 	Demux_Register_Section_Filter_Callback(demux_sdt_callback);
 	Demux_Set_Filter(player_handle, SDT_PID, SDT_TABLE_ID, &filter_handle);
 
@@ -138,6 +198,7 @@ int stb_scan()
 
 	Demux_Unregister_Section_Filter_Callback(demux_sdt_callback);
 	Demux_Free_Filter(player_handle, filter_handle);
+	*/
 
 	puts("Got SDT!");
 
@@ -183,12 +244,9 @@ int stb_ch_switch(int ch)
 	int video_pid = pmt_get_video_pid(&pmt);
 
   // not working always, better flag
-	if(current_ch == 1)
-	{
-    // separate those handlers
-		Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
-		Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
-	}
+  // separate those handlers
+	Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
+	Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
 
 	current_ch = 1;
 

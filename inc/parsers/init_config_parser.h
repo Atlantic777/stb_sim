@@ -22,7 +22,7 @@
 typedef struct init_config init_config_t;
 
 struct init_config {
-	uint16_t	frequency;
+	uint32_t	frequency;
 	uint8_t 	bandwidth;
 	uint8_t		module;
 

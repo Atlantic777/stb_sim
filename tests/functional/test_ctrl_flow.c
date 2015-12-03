@@ -37,7 +37,7 @@ int main()
   ctrl_set_view(&console);
   kb_set_callback(ctrl.handler);
 
-  ctrl.start();
+  ctrl.start(NULL);
   keyboard.start();
 
   deinit();

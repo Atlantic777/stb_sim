@@ -4,6 +4,7 @@ if(DEFINED CROSS_COMPILE)
 		pat_parser 
 		pmt_parser 
 		sdt_parser
+		init_config_parser
 		pthread tdp OSAL shm PEAgent
 	)
 endif()
