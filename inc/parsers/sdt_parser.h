@@ -15,9 +15,9 @@ struct sdt_table {
 	uint8_t last_section_number;
 	uint16_t original_network_id;
 	uint8_t reserved_future_use;
-	
+
 	uint8_t services_cnt;
-	service_desc_t *services;
+	service_item_t *services;
 };
 
 struct service_item {
@@ -30,7 +30,7 @@ struct service_item {
 
 	uint16_t descriptors_loop_length;
 	uint8_t descriptors_cnt;
-	serive_desc_t *descriptors;
+	service_desc_t *descriptors;
 
 	service_item_t *next;
 };
@@ -41,7 +41,7 @@ struct service_desc {
 	uint8_t service_type;
 
 	uint8_t service_provider_name_length;
-	char *provider_name; 
+	char *provider_name;
 
 	uint8_t service_name_length;
 	char *service_name;

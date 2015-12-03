@@ -1,23 +1,10 @@
 #include "parsers/pmt_parser.h"
+#include "parsers/parser_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 #define AUDIO_TYPE 3
 #define VIDEO_TYPE 2
-
-static uint16_t get_short(uint8_t *buff, uint32_t offset)
-{
-	uint16_t up, down;
-	uint16_t ret;
-
-
-	up	= buff[offset] << 8;
-	down	= buff[offset+1];
-
-	ret = up + down;
-
-	return ret;
-}
 
 int pmt_parse(pmt_table_t *pmt, uint8_t *buff)
 {
@@ -29,17 +16,7 @@ int pmt_parse(pmt_table_t *pmt, uint8_t *buff)
 
 	pmt->program_number = get_short(buff, 3);
 
-	//pmt->version_number = get_short(buff, 5) & 0x0;
 	pmt->program_info_length = get_short(buff, 10) & 0x0FFF;
-
-	/*
-	parsed = 0;
-	while(parsed < pmt->program_info_length)
-	{
-		parsed += 8;
-		puts("here");
-	}
-	*/
 
 	// parse streams
 	streams_offset =
