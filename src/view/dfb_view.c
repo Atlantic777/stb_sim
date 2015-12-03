@@ -1,10 +1,13 @@
 #include <pthread.h>
 #include <stdio.h>
 #include "view/dfb_view.h"
+#include "model/service_list.h"
 #include <directfb.h>
 #include <string.h>
 #include <time.h>
 #include <signal.h>
+
+// TODO: directfb deinit
 
 static timer_t render_timer_id;
 static struct sigevent render_ev;
@@ -17,8 +20,18 @@ static IDirectFB *dfbInterface = NULL;
 static DFBSurfaceDescription surfaceDesc;
 static IDirectFBSurface *primary = NULL;
 
+static IDirectFBFont *fontInterface = NULL;
+static DFBFontDescription fontDescription;
+
 static int screenWidth  = -1;
 static int screenHeight = -1;
+
+static service_item_t *current_ch;
+static char ch_info_str[256];
+
+IDirectFBImageProvider *provider;                                             
+IDirectFBSurface *logoSurface = NULL;                                         
+int32_t logoHeight, logoWidth;                                                
 
 int pos = 0;
 
@@ -44,12 +57,8 @@ static void render_info_bar()
 		primary->SetColor(primary, 0x00, 0x00, 0xff, 0xff);
 		primary->FillRectangle(primary, 0, 1000, 1920, 50);
 
-    // TODO:
-    // - ch number
-    // - ch position
-    // - name
-    // - type
-    // - A/V pid
+		primary->SetColor(primary, 0xff, 0xff, 0xff, 0xff);
+		primary->DrawString(primary, ch_info_str, -1, 100, 100, DSTF_LEFT);
 	}
 }
 
@@ -109,29 +118,47 @@ static void dfb_view_start()
 	timer_create(CLOCK_REALTIME, &render_ev, &render_timer_id);
 	timer_settime(render_timer_id, 0, &render_timer_spec, &render_timer_spec_old);
 
-	// primary->Release(primary);
-	// dfbInterface->Release(dfbInterface);
+	fontDescription.flags = DFDESC_HEIGHT;
+	fontDescription.height = 48;
+
+	dfbInterface->CreateFont(dfbInterface, "/home/galois/fonts/DejaVuSans.ttf",
+		&fontDescription, &fontInterface);
+
+	dfbInterface->CreateImageProvider(dfbInterface, "dfblogo_alpha.png", &provider);
+	provider->GetSurfaceDescription(provider, &surfaceDesc);
+	dfbInterface->CreateSurface(dfbInterface, &surfaceDesc, &logoSurface);
+
+	provider->RenderTo(provider, logoSurface, NULL);
+	provider->Release(provider);
+	logoSurface->GetSize(logoSurface, &logoWidth, &logoHeight);
+
+	primary->SetFont(primary, fontInterface);
 }
 
 static void dfb_show_num_input(char *buff)
 {
+	puts("show num input");
 	show_num_input = 1;
 }
 
 static void dfb_hide_num_input()
 {
+	puts("hide num input");
 	show_num_input = 0;
 }
 
 // TODO: accept service item
-// TODO: if NULL, show last
-static void dfb_show_info_bar(int ch)
+static void dfb_show_info_bar(service_item_t *ch)
 {
+	puts("show_info_bar");
 	show_info_bar = 1;
+	current_ch = ch;
+	sprintf(ch_info_str, "%d - %d", ch->position, ch->program_number);
 }
 
 static void dfb_hide_info_bar()
 {
+	puts("hide info bar");
 	show_info_bar = 0;
 }
 

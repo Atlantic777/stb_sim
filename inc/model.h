@@ -1,13 +1,15 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include "model/service_list.h"
+
 typedef struct model {
 	int (*init)(char*);
 	int (*deinit)();
 
 	int (*scan)();
 
-	int (*get_current_ch)();
+	service_item_t* (*get_current_ch)();
 	int (*get_ch_list)();
   int (*get_volume)();
 
@@ -17,6 +19,7 @@ typedef struct model {
 
 	int (*vol_up)();
 	int (*vol_down)();
+	int (*vol_mute)();
 } model_t;
 
 #endif

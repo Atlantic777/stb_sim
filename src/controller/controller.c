@@ -47,15 +47,15 @@ static void vol_down();
 static void next_chan()
 {
 	_model->ch_up();
-  // TODO:
-  // R: view accepts ch description
-  // get current ch description
-  // show view with current ch
+  _view->show_info_bar(_model->get_current_ch());
+  timer_settime(t_info_bar_id, 0, &its, NULL);
 }
 
 static void prev_chan()
 {
 	_model->ch_down();
+  _view->show_info_bar(_model->get_current_ch());
+  timer_settime(t_info_bar_id, 0, &its, NULL);
 }
 
 static void vol_up()
@@ -67,7 +67,7 @@ static void vol_down()
 {
 	_model->vol_down();
   // TODO: view volume handler
-	_view->show_volume(_model->get_volume());
+	//_view->show_volume(_model->get_volume());
 }
 
 static void process_input_buffer()
@@ -86,8 +86,8 @@ static void num_finish()
   _view->hide_num_input();
   process_input_buffer();
 
-  _view->show_info_bar(current_chan);
-  timer_settime(t_info_bar_id, 0, &its, NULL);
+  //_view->show_info_bar(current_chan);
+  //timer_settime(t_info_bar_id, 0, &its, NULL);
 
   // TODO:
   // if timeout -> switch to ch by ch by order
@@ -113,6 +113,7 @@ static void store_num(char n)
   timer_settime(t_num_input_id, 0, &its, NULL);
   _view->show_num_input(nums);
 	_model->ch_switch(n);
+	_view->show_info_bar(_model->get_current_ch());
 }
 
 // ############ STATES ################

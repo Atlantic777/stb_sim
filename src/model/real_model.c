@@ -9,6 +9,7 @@
 #include "model/service_list.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define DESIRED_FREQUENCY 754000000
 #define BANDWIDTH 8
@@ -17,14 +18,17 @@
 #define PAT_TABLE_ID 0
 #define PMT_TABLE_ID 2
 #define SDT_TABLE_ID 0x42
+#define VOL_CONST 2000000
 
-static int32_t current_ch = 0;
+static uint32_t current_ch = 0;
+static uint8_t current_vol = 0;
+static uint8_t  mute_state = 0;
 
 static int32_t VideoType;
 static int32_t AudioType;
 
 static int stb_scan();
-static int stb_get_current_ch();
+static service_item_t* stb_get_current_ch();
 static int stb_get_ch_list();
 
 static int stb_ch_switch(int ch);
@@ -55,7 +59,6 @@ static sdt_table_t sdt;
 static service_table_t services;
 
 // ######## CALLBACKS ##############
-
 static int32_t lock_status_callback(t_LockStatus status)
 {
 	pthread_mutex_lock(&status_mutex);
@@ -211,8 +214,9 @@ int stb_scan()
   // [ ] fill services table with sdt info
 }
 
-int stb_get_current_ch()
+service_item_t* stb_get_current_ch()
 {
+	return &services.items[current_ch];
 }
 
 int stb_get_ch_list()
@@ -226,13 +230,6 @@ int stb_get_ch_list()
 // call zapp handler
 int stb_ch_switch(int ch)
 {
-	// TODO: ugly
-  // read from services table
-  /*
-	program_desc_t *prog_desc;
-	pat_get_entry(ch, &pat, &prog_desc);
-	*/
-		
 	ch = ch-1;
 	uint32_t pmt_pid = services.items[ch].pmt_pid;
 	printf("ch: %d - pmt: %d\n",  ch, pmt_pid);
@@ -258,52 +255,68 @@ int stb_ch_switch(int ch)
 	Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
 	Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
 
-	current_ch = 1;
+	current_ch = ch;
 
   // don't set video stream if service is not of a video type
 	Player_Stream_Create(player_handle, source_handle,
-		video_pid, VIDEO_TYPE_MPEG2, &stream_handle_V);
+		video_pid, VideoType, &stream_handle_V);
 
 	Player_Stream_Create(player_handle, source_handle,
-		audio_pid, AUDIO_TYPE_MPEG_AUDIO, &stream_handle_A);
+		audio_pid, AudioType, &stream_handle_A);
 }
 
 int stb_ch_up()
 {
-  // TODO: current ch bump by mod +1 - mod is services cnt
-  // update current ch
-  // switch to current ch
+  current_ch = (services.cnt + current_ch + 1) % services.cnt + 1;
+	stb_ch_switch(current_ch);
 }
 
 int stb_ch_down()
 {
-  // TODO: current ch bump by mod -1 - mod is services cnt
-  // update current ch
-  // switch to current ch
+  current_ch = (services.cnt + current_ch - 1) % services.cnt + 1;
+	stb_ch_switch(current_ch);
+}
+
+static uint32_t to_db(uint32_t level)
+{
+	return pow(10, (float)level/10);
 }
 
 int stb_vol_up()
 {
-  // TODO: limit up volume when -Db is 0
-  // update volume +10
-  // log formula
-  // call driver
+  if(current_vol < 100)
+	{
+		current_vol += 10;
+	}
+	
+	printf("current: %d - db: %d\n", current_vol, to_db(current_vol));
+	Player_Volume_Set(player_handle, current_vol*VOL_CONST);
 }
 
 int stb_vol_down()
 {
-  // TODO: limit up volume when -Db is small enough
-  // update volume +10
-  // log formula
-  // call driver
+  if(current_vol > 0)
+	{
+		current_vol -= 10;
+	}
+
+	printf("current: %d - db: %d\n", current_vol, to_db(current_vol));
+	Player_Volume_Set(player_handle, current_vol*VOL_CONST);
 }
 
 // TODO: add this to model iface
 int stb_vol_mute()
 {
-  // TODO: set volume to 0
-  // log formula
-  // call driver
+	if(mute_state == 1)
+	{
+		mute_state = 0;
+		Player_Volume_Set(player_handle, current_vol*VOL_CONST);
+	}
+	else
+	{
+		mute_state = 1;
+		Player_Volume_Set(player_handle, 0);
+	}
 }
 
 void stb_model_init(model_t *model)
@@ -320,6 +333,7 @@ void stb_model_init(model_t *model)
 	model->vol_up	= stb_vol_up;
 	model->vol_down	= stb_vol_down;
 	model->get_volume = stb_get_vol;
+	model->vol_mute = stb_vol_mute;
 
 	model->ch_switch = stb_ch_switch;
 }
