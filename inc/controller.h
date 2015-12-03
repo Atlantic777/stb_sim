@@ -30,9 +30,9 @@ typedef struct controller {
 
 typedef void(*State)(signal_t, uint32_t);
 
-int ctrl_init(controller_t *ctrl);
-int ctrl_deinit();
+uint8_t ctrl_init(controller_t *ctrl);
+uint8_t ctrl_deinit();
 
-int ctrl_set_view(view_t *view);
+uint8_t ctrl_set_view(view_t *view);
 
 #endif

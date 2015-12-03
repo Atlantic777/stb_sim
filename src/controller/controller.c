@@ -12,7 +12,6 @@
 #include "controller.h"
 #include "model.h"
 #include "controller/norm_codes.h"
-#include <stdint.h>
 
 static view_t   *_view;
 static model_t  *_model;
@@ -23,8 +22,8 @@ static void state_idle(signal_t, uint32_t);
 static void state_num_enter(signal_t, uint32_t);
 
 static char nums[4];
-static int  nums_len;
-static int  current_chan = 1;
+static uint8_t  nums_len;
+static uint8_t  current_chan = 1;
 
 static struct itimerspec its;
 static struct sigevent sev;
@@ -133,7 +132,7 @@ static void state_idle(signal_t sig, uint32_t args)
 	{
 		if(N_KEY_VOL_UP == args)
 		{
-			vol_up();	
+			vol_up();
 		}
 		else if(N_KEY_VOL_DN == args)
 		{
@@ -190,7 +189,7 @@ static void stop()
 {
 }
 
-static int isNum(uint32_t c)
+static uint8_t isNum(uint32_t c)
 {
   if(c >= 0 && c <= 9)
   {
@@ -238,7 +237,7 @@ static void input_handler(uint32_t ev)
 }
 
 /// \brief Nothing to see here
-int ctrl_init(controller_t *ctrl)
+uint8_t ctrl_init(controller_t *ctrl)
 {
   ctrl->start     = start;
   ctrl->stop      = stop;
@@ -263,7 +262,7 @@ int ctrl_init(controller_t *ctrl)
   return 0;
 }
 
-int ctrl_deinit()
+uint8_t ctrl_deinit()
 {
   return 1;
 }
@@ -275,13 +274,13 @@ int ctrl_deinit()
  *
  * @return  status code
  */
-int ctrl_set_view(view_t *view)
+uint8_t ctrl_set_view(view_t *view)
 {
   _view = view;
   return 0;
 }
 
-int ctrl_set_model(model_t *model)
+uint8_t ctrl_set_model(model_t *model)
 {
 	_model = model;
 	return 0;
