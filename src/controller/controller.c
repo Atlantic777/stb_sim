@@ -4,6 +4,13 @@
  * @date November 2015
  * @brief Implementation of STB controller part of MVC
  */
+// TODO. handle info key (show info bar)
+// TODO: add zap finish handler
+// TODO: make a difference when num input timeout
+// TODO: check if vol change works while zapping
+// TODO: check multiple ch change events
+// TODO: don't forge default config parser
+// TODO: proper controller thread join (main f structure)
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -40,6 +47,10 @@ static void vol_down();
 static void next_chan()
 {
 	_model->ch_up();
+  // TODO:
+  // R: view accepts ch description
+  // get current ch description
+  // show view with current ch
 }
 
 static void prev_chan()
@@ -55,6 +66,7 @@ static void vol_up()
 static void vol_down()
 {
 	_model->vol_down();
+  // TODO: view volume handler
 	_view->show_volume(_model->get_volume());
 }
 
@@ -76,6 +88,10 @@ static void num_finish()
 
   _view->show_info_bar(current_chan);
   timer_settime(t_info_bar_id, 0, &its, NULL);
+
+  // TODO:
+  // if timeout -> switch to ch by ch by order
+  // if 3-key-input -> switch to ch by ch number
 
   _state = state_idle;
   _state(SIG_NOOP, 0);
@@ -148,6 +164,8 @@ static void state_num_enter(signal_t sig, uint32_t args)
   if(SIG_NUM_KEY == sig)
   {
     store_num(args);
+
+    // TODO: if 3 keys -> go to finish nums with 3-key-signal
   }
   else if(SIG_TIMEOUT == sig)
   {
@@ -160,12 +178,15 @@ static void state_num_enter(signal_t sig, uint32_t args)
 static void boot()
 {
   LOG("Booting...");
+  // TODO: pass A/V stream types from init config
 	_model->init();
 }
 
 static void parse_config()
 {
   LOG("Parse config...");
+  // TODO
+  /* init_config_parse() */
 }
 
 static void switch_default()
@@ -179,7 +200,10 @@ static void start()
   LOG("Hello from ctrl start");
 
   boot();
+
+  // TODO: pass config file path
   parse_config();
+
   switch_default();
 
   _state(SIG_NOOP, 0);
@@ -253,11 +277,18 @@ uint8_t ctrl_init(controller_t *ctrl)
   its.it_interval.tv_sec = 0;
   its.it_interval.tv_nsec = 0;
 
+  // TODO add timeout args
   sev.sigev_notify_function = num_finish;
   timer_create(CLOCK_REALTIME, &sev, &t_num_input_id);
 
   sev.sigev_notify_function = info_bar_finish;
   timer_create(CLOCK_REALTIME, &sev, &t_info_bar_id);
+
+  // TODO: volume autohide
+  /* sev.sigev_notify_function = volume_info_finish; */
+  /* timer_create(CLOCK_REALTIME, &sev, &t_info_bar_id); */
+
+  // set location for default config
 
   return 0;
 }

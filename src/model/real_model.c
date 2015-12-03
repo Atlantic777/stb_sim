@@ -140,6 +140,10 @@ int stb_scan()
 	Demux_Free_Filter(player_handle, filter_handle);
 
 	puts("Got SDT!");
+
+  // TODO: fill services table
+  // [ ] create services table from a pat table
+  // [ ] fill services table with sdt info
 }
 
 int stb_get_current_ch()
@@ -151,12 +155,16 @@ int stb_get_ch_list()
 	pat_print(&pat);
 }
 
+// TODO: make it thread safe
+// update current ch
+// spawn a new thread
+// call zapp handler
 int stb_ch_switch(int ch)
 {
 	// TODO: ugly
+  // read from services table
 	program_desc_t *prog_desc;
 	pat_get_entry(ch, &pat, &prog_desc);
-
 
 	Demux_Register_Section_Filter_Callback(demux_pmt_callback);
 	Demux_Set_Filter(player_handle,
@@ -174,14 +182,17 @@ int stb_ch_switch(int ch)
 	int audio_pid = pmt_get_audio_pid(&pmt);
 	int video_pid = pmt_get_video_pid(&pmt);
 
+  // not working always, better flag
 	if(current_ch == 1)
 	{
+    // separate those handlers
 		Player_Stream_Remove(player_handle, source_handle, stream_handle_V);
 		Player_Stream_Remove(player_handle, source_handle, stream_handle_A);
 	}
 
 	current_ch = 1;
 
+  // don't set video stream if service is not of a video type
 	Player_Stream_Create(player_handle, source_handle,
 		video_pid, VIDEO_TYPE_MPEG2, &stream_handle_V);
 
@@ -191,20 +202,40 @@ int stb_ch_switch(int ch)
 
 int stb_ch_up()
 {
-
+  // TODO: current ch bump by mod +1 - mod is services cnt
+  // update current ch
+  // switch to current ch
 }
 
 int stb_ch_down()
 {
-
+  // TODO: current ch bump by mod -1 - mod is services cnt
+  // update current ch
+  // switch to current ch
 }
 
 int stb_vol_up()
 {
+  // TODO: limit up volume when -Db is 0
+  // update volume +10
+  // log formula
+  // call driver
 }
 
 int stb_vol_down()
 {
+  // TODO: limit up volume when -Db is small enough
+  // update volume +10
+  // log formula
+  // call driver
+}
+
+// TODO: add this to model iface
+int stb_vol_mute()
+{
+  // TODO: set volume to 0
+  // log formula
+  // call driver
 }
 
 void stb_model_init(model_t *model)

@@ -33,6 +33,8 @@ static void render_number_input()
 	{
 		primary->SetColor(primary, 0xff, 0x00, 0x00, 0xff);
 		primary->FillRectangle(primary, 100, 100, 100, 20);
+
+    // TODO: ch numbers and dashes (text)
 	}
 }
 
@@ -41,6 +43,13 @@ static void render_info_bar()
 	if(show_info_bar) {
 		primary->SetColor(primary, 0x00, 0x00, 0xff, 0xff);
 		primary->FillRectangle(primary, 0, 1000, 1920, 50);
+
+    // TODO:
+    // - ch number
+    // - ch position
+    // - name
+    // - type
+    // - A/V pid
 	}
 }
 
@@ -114,6 +123,8 @@ static void dfb_hide_num_input()
 	show_num_input = 0;
 }
 
+// TODO: accept service item
+// TODO: if NULL, show last
 static void dfb_show_info_bar(int ch)
 {
 	show_info_bar = 1;
@@ -122,6 +133,15 @@ static void dfb_show_info_bar(int ch)
 static void dfb_hide_info_bar()
 {
 	show_info_bar = 0;
+}
+
+// TODO: valume view items
+static void dfb_show_volume(int vol)
+{
+}
+
+static void dfb_hide_volume()
+{
 }
 
 int dfb_view_init(view_t *view)
@@ -135,9 +155,13 @@ int dfb_view_init(view_t *view)
 	view->show_info_bar = dfb_show_info_bar;
 	view->hide_info_bar = dfb_hide_info_bar;
 
+
+  // TODO: register volume handlers
+
 	return 0;
 }
 
+// TODO: propper deinit
 int dfb_view_deinit()
 {
 }
