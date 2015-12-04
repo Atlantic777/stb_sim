@@ -154,6 +154,23 @@ static void dfb_show_num_input(char *buff)
 {
 	puts("show num input");
 	show_num_input = 1;
+
+  /*
+   * int i;
+   * for(i = 0; i < strlen(buff); i++)
+   * {
+   *    num_input_buff[i] = buff[i];
+   * }
+   *
+   * if(strlen(buff) == 3)
+   * {
+   *  num_input_buff[i] = NULL;
+   * }
+   * else
+   * {
+   *  num_input_buff[]
+   * }
+   */
 }
 
 static void dfb_hide_num_input()
