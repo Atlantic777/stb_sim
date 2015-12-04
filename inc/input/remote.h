@@ -1,3 +1,9 @@
+/**
+ * @file remote.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Remote control (implements input interface)
+ */
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 

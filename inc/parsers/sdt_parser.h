@@ -1,3 +1,10 @@
+/**
+ * @file sdt_parser.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief [UNUSED] Service Description Table -
+ * structure and implementation
+ */
 #ifndef SDT_PARSER_H
 #define SDT_PARSER_H
 
@@ -7,6 +14,9 @@ typedef struct sdt_table sdt_table_t;
 typedef struct service_loop_item service_loop_item_t;
 typedef struct service_desc service_desc_t;
 
+/**
+ * @brief [UNUSED] Service Description Table
+ */
 struct sdt_table {
 	uint8_t table_id;
 	uint16_t section_length;
@@ -20,6 +30,13 @@ struct sdt_table {
 	service_loop_item_t *services;
 };
 
+/**
+ * @brief A service loop item.
+ *
+ * Each program (service) which has a description in SDT
+ * will have a descriptor in form of a loop item. Further,
+ * each loop item can have a range of specifice descriptors.
+ */
 struct service_loop_item {
 	uint16_t service_id;
 	uint8_t reserved_future_use;
@@ -35,6 +52,9 @@ struct service_loop_item {
 	service_loop_item_t *next;
 };
 
+/**
+ * @brief A service descriptor in SDT
+ */
 struct service_desc {
 	uint8_t decsriptor_tag;
 	uint8_t descriptor_length;

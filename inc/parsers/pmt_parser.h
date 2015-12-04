@@ -1,3 +1,9 @@
+/**
+ * @file pmt_parser.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Program Map Table - structure and parser
+ */
 #ifndef PMT_PARSER_H
 #define PMT_PARSER_H
 
@@ -8,6 +14,9 @@
 typedef struct pmt_table pmt_table_t;
 typedef struct stream stream_t;
 
+/**
+ * @brief Program Map Table
+ */
 struct pmt_table {
 	uint8_t		table_id;
 	uint16_t	section_length;
@@ -22,6 +31,9 @@ struct pmt_table {
 	uint32_t	crc;
 };
 
+/**
+ * @brief Description of stream entry mapped to a program.
+ */
 struct stream {
 	uint8_t		stream_type;
 	uint16_t	elementary_pid;

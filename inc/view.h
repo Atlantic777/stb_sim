@@ -1,8 +1,17 @@
+/**
+ * @file view.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief View interface
+ */
 #ifndef VIEW_H
 #define VIEW_H
 
 #include "model/service_list.h"
 
+/**
+ * @brief Standard view interface
+ */
 typedef struct view {
   void (*log)(char*);
 

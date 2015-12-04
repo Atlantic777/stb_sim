@@ -1,3 +1,9 @@
+/**
+ * @file remote_codes.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Remote control key codes table
+ */
 #ifndef REMOTE_CODES_H
 #define REMOTE_CODES_H
 

@@ -1,3 +1,9 @@
+/**
+ * @file keyboard.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Keyboard (implements input interface)
+ */
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 

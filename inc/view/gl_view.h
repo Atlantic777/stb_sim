@@ -1,3 +1,9 @@
+/**
+ * @file gl_view.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief OpenGL view (implements view_t)
+ */
 #ifndef VIEW_OPENGL_H
 #define VIEW_OPENGL_H
 

@@ -18,9 +18,6 @@ int pmt_parse(pmt_table_t *pmt, uint8_t *buff)
 
 	pmt->program_info_length = get_short(buff, 10) & 0x0FFF;
 
-  // parse descriptors
-  parsed = 0;
-
 	// parse streams
 	streams_offset =
 		PMT_HEADER_LEN + (pmt->program_info_length);

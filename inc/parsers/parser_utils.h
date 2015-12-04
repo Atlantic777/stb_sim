@@ -1,3 +1,9 @@
+/**
+ * @file parser_utils.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Common usefull functions for MPEG/DVB data parsing
+ */
 #ifndef PARSER_UTILS_H
 #define PARSER_UTILS_H
 

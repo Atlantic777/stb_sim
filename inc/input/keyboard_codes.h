@@ -1,3 +1,9 @@
+/**
+ * @file keyboard_codes.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Keyboard keycodes table
+ */
 #ifndef KEYBOARD_CODES_H
 #define KEYBOARD_CODES_H
 

@@ -1,9 +1,3 @@
-/**
- * @file controller.c
- * @author Nikola Hardi
- * @date November 2015
- * @brief Implementation of STB controller part of MVC
- */
 // TODO: add zap finish handler
 // TODO: make a difference when num input timeout
 // TODO: check if vol change works while zapping

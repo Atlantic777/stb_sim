@@ -1,3 +1,9 @@
+/**
+ * @file pat_parser.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief Program Allocation Table - structure and parser
+ */
 #ifndef PAT_PARSER_H
 #define PAT_PARSER_H
 
@@ -6,6 +12,9 @@
 typedef struct program_desc program_desc_t;
 typedef struct pat_table pat_table_t;
 
+/**
+ * @brief The program allocation table
+ */
 struct pat_table {
 	uint8_t		table_id;
 	uint8_t		section_syntax_indicator;
@@ -20,6 +29,9 @@ struct pat_table {
 	uint32_t	crc;
 };
 
+/**
+ * @brief A program entry in the PAT.
+ */
 struct program_desc {
 	uint16_t	program_number;
 	uint16_t	program_pid;

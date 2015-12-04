@@ -1,3 +1,9 @@
+/**
+ * @file dfb_view.h
+ * @author Nikola Hardi
+ * @date November 2015
+ * @brief DirectFB view (implements view_t)
+ */
 #ifndef VIEW_DFB_H
 #define VIEW_DFB_H
 
