@@ -1,7 +1,6 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-#include <stdint.h>
 #include "model/service_list.h"
 
 typedef struct view {
@@ -13,7 +12,7 @@ typedef struct view {
   void (*show_info_bar)(service_item_t*);
   void (*hide_info_bar)();
 
-  void (*show_volume)(uint8_t vol);
+  void (*show_volume)(int vol);
   void (*hide_volume)();
 
   void (*start)();

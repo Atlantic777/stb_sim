@@ -13,6 +13,7 @@ static struct itimerspec render_timer_spec, render_timer_spec_old;
 
 static int show_num_input = 0;
 static int show_info_bar = 0;
+static int show_volume_level = 0;
 
 static IDirectFB *dfbInterface = NULL;
 static DFBSurfaceDescription surfaceDesc;
@@ -26,6 +27,7 @@ static int screenHeight = -1;
 
 static service_item_t *current_ch;
 static char ch_info_str[256];
+static int vol_level = 0;
 
 IDirectFBImageProvider *provider;
 IDirectFBSurface *logoSurface = NULL;
@@ -42,26 +44,45 @@ static void render_number_input()
 {
 	if(show_num_input)
 	{
+    // TODO: bg color, position and text
 		primary->SetColor(primary, 0xff, 0x00, 0x00, 0xff);
 		primary->FillRectangle(primary, 100, 100, 100, 20);
 
-    // TODO: ch numbers and dashes (text) - sprintf
+    // primary->SetColor(primary, 0xff, 0xff, 0xff, 0xff);
+    // primary->DrawString(primary, -1, num_input_buff,
+    //    1640, 920, DSTF_LEFT);
 	}
 }
 
 static void render_info_bar()
 {
 	if(show_info_bar) {
+    // TODO: bg color, posotion and text
 		primary->SetColor(primary, 0x00, 0x00, 0xff, 0xff);
-		primary->FillRectangle(primary, 0, 1000, 1920, 50);
+		primary->FillRectangle(primary, 384, 60, 384*3, 240);
 
+    // primary->SetColor(primary, 0xff, 0xff, 0xff, 0xff);
+    // write channel
+    // primary->DrawString(primary, -1, )
+    // write prog number
+    // write ttx support
+    // write service name
+    // write service type
+    /*
 		primary->SetColor(primary, 0xff, 0xff, 0xff, 0xff);
 		primary->DrawString(primary, ch_info_str, -1, 100, 100, DSTF_LEFT);
+    */
 	}
 }
 
 static void render_volume()
 {
+  if(show_volume_level)
+  {
+    // TODO: vol position
+    // blit propper image from array
+    // to standard position
+  }
 }
 
 static void *dfb_render_loop(void *args)
@@ -74,13 +95,7 @@ static void *dfb_render_loop(void *args)
 	render_info_bar();
 	render_volume();
 
-	// primary->SetColor(primary, 0x00, 0xff, 0x00, 0xff);
-	// primary->FillRectangle(primary, pos, 0, 100, screenHeight);
 	primary->Flip(primary, NULL, 0);
-
-	pos++;
-
-	if(pos > 100) pos = 0;
 }
 
 static void dfb_view_start()
@@ -164,10 +179,13 @@ static void dfb_hide_info_bar()
 // TODO: valume view items
 static void dfb_show_volume(int vol)
 {
+  show_volume_level = 1;
+  vol_level = vol/10;
 }
 
 static void dfb_hide_volume()
 {
+  show_volume_level = 0;
 }
 
 int dfb_view_init(view_t *view)
@@ -182,6 +200,8 @@ int dfb_view_init(view_t *view)
 	view->hide_info_bar = dfb_hide_info_bar;
 
   // TODO: register volume handlers
+  view->show_volume = dfb_show_volume;
+  view->hide_volume = dfb_hide_volume;
 
 	return 0;
 }
