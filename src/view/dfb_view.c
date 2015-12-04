@@ -7,8 +7,6 @@
 #include <time.h>
 #include <signal.h>
 
-// TODO: directfb deinit
-
 static timer_t render_timer_id;
 static struct sigevent render_ev;
 static struct itimerspec render_timer_spec, render_timer_spec_old;
@@ -29,9 +27,9 @@ static int screenHeight = -1;
 static service_item_t *current_ch;
 static char ch_info_str[256];
 
-IDirectFBImageProvider *provider;                                             
-IDirectFBSurface *logoSurface = NULL;                                         
-int32_t logoHeight, logoWidth;                                                
+IDirectFBImageProvider *provider;
+IDirectFBSurface *logoSurface = NULL;
+int32_t logoHeight, logoWidth;
 
 int pos = 0;
 
@@ -47,7 +45,7 @@ static void render_number_input()
 		primary->SetColor(primary, 0xff, 0x00, 0x00, 0xff);
 		primary->FillRectangle(primary, 100, 100, 100, 20);
 
-    // TODO: ch numbers and dashes (text)
+    // TODO: ch numbers and dashes (text) - sprintf
 	}
 }
 
@@ -132,7 +130,7 @@ static void dfb_view_start()
 	provider->RenderTo(provider, logoSurface, NULL);
 	provider->Release(provider);
 	logoSurface->GetSize(logoSurface, &logoWidth, &logoHeight);
-	*/ 
+	*/
 
 	primary->SetFont(primary, fontInterface);
 }
@@ -149,7 +147,6 @@ static void dfb_hide_num_input()
 	show_num_input = 0;
 }
 
-// TODO: accept service item
 static void dfb_show_info_bar(service_item_t *ch)
 {
 	puts("show_info_bar");
@@ -183,7 +180,6 @@ int dfb_view_init(view_t *view)
 
 	view->show_info_bar = dfb_show_info_bar;
 	view->hide_info_bar = dfb_hide_info_bar;
-
 
   // TODO: register volume handlers
 

@@ -31,9 +31,6 @@ struct service_item {
   service_type_t type;
 };
 
-// TODO
-// [ ] allocate memory
-// [ ] copy pmt pid's
 int pat2services(pat_table_t *pat, service_table_t *srv);
 
 // TODO
@@ -45,6 +42,6 @@ service_item_t* service_get_by_index(service_table_t *srv, int idx);
 // handle mismatches
 // [ ] set name (strncpy)
 // [ ] set type
-int service_add_desc(service_table_t *srv, sdt_table_t *sdt);
+int service_add_sdt(service_table_t *srv, sdt_table_t *sdt);
 
 #endif

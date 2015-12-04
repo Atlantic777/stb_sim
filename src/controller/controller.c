@@ -4,12 +4,10 @@
  * @date November 2015
  * @brief Implementation of STB controller part of MVC
  */
-// TODO. handle info key (show info bar)
 // TODO: add zap finish handler
 // TODO: make a difference when num input timeout
 // TODO: check if vol change works while zapping
 // TODO: check multiple ch change events
-// TODO: don't forge default config parser
 // TODO: proper controller thread join (main f structure)
 #include <stdio.h>
 #include <pthread.h>
@@ -183,32 +181,13 @@ static void state_num_enter(signal_t sig, uint32_t args)
 static void boot(char *filepath)
 {
   LOG("Booting...");
-  // TODO: pass A/V stream types from init config
 	_model->init(filepath);
-}
-
-static void parse_config()
-{
-  LOG("Parse config...");
-  // TODO
-  /* init_config_parse() */
-}
-
-static void switch_default()
-{
-  LOG("Switching to default A/V streams...");
 }
 
 // ####### PUBLIC ##############
 static void start(char *init_file_path)
 {
-  LOG("Hello from ctrl start");
-
   boot(init_file_path);
-	puts(init_file_path);
-
-  switch_default();
-
   _state(SIG_NOOP, 0);
 }
 
@@ -232,12 +211,10 @@ static signal_t decode_signal(uint32_t ev)
 {
   if(isNum(ev))
   {
-    LOG("SIG_NUM_KEY");
     return SIG_NUM_KEY;
   }
   else if(N_KEY_EXIT == ev)
   {
-    LOG("SIG_KILL");
     return SIG_KILL;
   }
 	else if(N_KEY_CH_UP == ev || N_KEY_CH_DN == ev)
@@ -294,8 +271,6 @@ uint8_t ctrl_init(controller_t *ctrl)
   // TODO: volume autohide
   /* sev.sigev_notify_function = volume_info_finish; */
   /* timer_create(CLOCK_REALTIME, &sev, &t_info_bar_id); */
-
-  // set location for default config
 
   return 0;
 }

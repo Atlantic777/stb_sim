@@ -308,7 +308,7 @@ int stb_vol_up()
 	{
 		current_vol += 10;
 	}
-	
+
 	Player_Volume_Set(player_handle, current_vol*VOL_CONST);
 }
 
