@@ -11,6 +11,12 @@ controller_t  ctrl;
 
 int main(int argc, char **argv)
 {
+	if(argc == 1)
+	{
+		puts("Don't have file config");
+		return -1;
+	}
+
   rc_init(&remote);
   stb_model_init(&model);
 
@@ -23,18 +29,7 @@ int main(int argc, char **argv)
   rc_set_callback(ctrl.handler);
 
   dfb.start();
-
-	if(argc == 1)
-	{
-		puts("Don't have file config");
-		//ctrl.start(NULL);
-		return -1;
-	}
-	else
-	{
-		puts("Have config filepath");
-		ctrl.start(argv[1]);
-	}
+  ctrl.start(argv[1]);
 
   remote.start();
 	model.deinit();
