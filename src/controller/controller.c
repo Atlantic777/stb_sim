@@ -59,13 +59,15 @@ static void prev_chan()
 static void vol_up()
 {
 	_model->vol_up();
+	_view->show_volume(_model->get_volume());
+  timer_settime(t_volume_id, 0, &its, NULL);
 }
 
 static void vol_down()
 {
 	_model->vol_down();
-  // TODO: view volume handler
-	//_view->show_volume(_model->get_volume());
+	_view->show_volume(_model->get_volume());
+  timer_settime(t_volume_id, 0, &its, NULL);
 }
 
 static void process_input_buffer()
@@ -75,6 +77,11 @@ static void process_input_buffer()
 }
 
 static void info_bar_finish()
+{
+  _view->hide_info_bar();
+}
+
+static void volume_info_finish()
 {
   _view->hide_info_bar();
 }
@@ -268,9 +275,8 @@ uint8_t ctrl_init(controller_t *ctrl)
   sev.sigev_notify_function = info_bar_finish;
   timer_create(CLOCK_REALTIME, &sev, &t_info_bar_id);
 
-  // TODO: volume autohide
-  /* sev.sigev_notify_function = volume_info_finish; */
-  /* timer_create(CLOCK_REALTIME, &sev, &t_info_bar_id); */
+  sev.sigev_notify_function = volume_info_finish;
+  timer_create(CLOCK_REALTIME, &sev, &t_volume_id);
 
   return 0;
 }
